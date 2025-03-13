@@ -13,6 +13,10 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   // Enes100.println("hello world!");
+
+  // TEST THIS!! trying to figure out linking multiple arduino files
+  print();
+
   Enes100.print("x: ");
   Enes100.println(Enes100.getX());
   delay(1000);
