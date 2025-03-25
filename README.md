@@ -1,2 +1,2 @@
 # enes100
-spring 2026 enes100 project
+spring 2025 enes100 project
