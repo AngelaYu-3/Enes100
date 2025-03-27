@@ -5,10 +5,10 @@
 // this function calculates the most efficient direction counter or clockwise for the
 // OTV to move in to turn to a set angle
 double calculateEfficientAngle(int currAngle, int targetAngle) {
-    currAngle = currAngle % 2*PI;
+    // currAngle = currAngle % 2*PI;
     if (currAngle < 0) currAngle += 2*PI;
     
-    targetAngle = targetAngle % 2*PI;
+    // targetAngle = targetAngle % 2*PI;
     if (targetAngle < 0) targetAngle += 2*PI;
     
     double cDistance = (targetAngle - currAngle + 2*PI) % 2*PI;
