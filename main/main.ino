@@ -2,33 +2,29 @@
 #include "Enes100.h"
 #include "Tank.h"
 
+// this function calculates the most efficient direction counter or clockwise for the
+// OTV to move in to turn to a set angle
 double calculateEfficientAngle(int currAngle, int targetAngle) {
-    // currAngle = currAngle % 360;
-    if (currAngle < 0) currAngle += 360;
+    currAngle = currAngle % 2*PI;
+    if (currAngle < 0) currAngle += 2*PI;
     
-    // targetAngle = targetAngle % 360;
-    if (targetAngle < 0) targetAngle += 360;
+    targetAngle = targetAngle % 2*PI;
+    if (targetAngle < 0) targetAngle += 2*PI;
     
-    double cDistance = (targetAngle - currAngle + 360) % 360;
-    double ccDistance = (currAngle - targetAngle + 360) % 360;
+    double cDistance = (targetAngle - currAngle + 2*PI) % 2*PI;
+    double ccDistance = (currAngle - targetAngle + 2*PI) % 2*PI;
     
     if (cDistance <= ccDistance) {
         return cDistance;
     } else {
-        return -cDistance;
+        return -ccDistance;
     }
 }
 
-// this function makes the OTV turn to a certain location 
+// this function makes the OTV turn to a certain angle 
 void setAngle(double targetAngle, double threshold, double pwm) {
     double currAngle = Enes100.getTheta();
     double rotAmount = calculateEfficientAngle(currAngle, targetAngle);
-    // double currAngle = Enes100.getTheta();
-    // double posY = 0;
-    // double negY = PI;
-    // double posX = HALF_PI;
-    // double negX = -HALF_PI;
-    // Enes100.print("Current angle: ");
     Enes100.println(Enes100.getTheta());
     
     while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
