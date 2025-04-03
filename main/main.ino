@@ -47,11 +47,9 @@ void setAngle(double targetAngle, double threshold, double pwm) {
     Enes100.println(Enes100.getTheta());    
 }
 
+// This function moves forward until there is a obstacle.
 void navigatingForward(double dist, double pwm) {
     double ultrasonicReading = Tank.readDistanceSensor(1);
-    
-    // Moves forward until it reaches the end of the arena 
-    while (Enes100.getX < 3.7) { 
         
         // While there is no obstacles, tank moves forward
         while (ultrasonicReading == -1 || ultrasonicReading > dist) {
@@ -60,81 +58,81 @@ void navigatingForward(double dist, double pwm) {
             ultrasonicReading = Tank.readDistanceSensor(1);
         } 
         
-        // There is obstacles, so moves either left or right.
-        avoidingObstacles(pwm);
-    }  
-}
+        // There is obstacles, so stop moving.
+        Tank.setLeftMotorPWM(0);
+        Tank.setRightMotorPWM(0); 
+    }
+    
+// This function moves towards a specific X coordinate
+void navigatingCoorX(double pwm, double finalX) {
+    double X = Enes100.getX();
+    double threshold = 0.09;
+       
+    if (X < finalX) {
+        setAngle(0, 0.09, 50);
+    } else {
+        setAngle(-PI, 0.09, 50);
+    }
+    
+    // If X is not near coor
+    while (!(X < (finalX + threshold) && X > (finalX - threshold))) {
+        Tank.setLeftMotorPWM(pwm);
+        Tank.setRightMotorPWM(pwm); 
+        
+        X = Enes100.getX();
+    }
 
-void avoidingObstacles(double pwm) {
-    // Tank stops moving.
+    // Stop moving, face default theta.
     Tank.setLeftMotorPWM(0);
     Tank.setRightMotorPWM(0); 
+    setAngle(0, 0.09, 50);
+}
+    
+// This function moves towards a specific Y coordinate
+void navigatingCoorY(double pwm, double finalY) {
     double Y = Enes100.getY();
-    
-    // If the vehicle is near the bottom of the arena (Y < 0.65)
-    if (Y < 0.65) {
-        // Turn left (toward the center)
-        setAngle(-PI/2, 0.09, 50);
-        
-        // Move until Y reaches approximately 1.0 (center zone)
-        while (Y < 1.0) {
-            Tank.setLeftMotorPWM(pwm);
-            Tank.setRightMotorPWM(pwm);
-            Y = Enes100.getY();
-        }
-        
-        // Check if there's still an obstacle
-        if (Tank.readDistanceSensor(1) > 0.2) {
-            // No obstacle, continue forward
-            setAngle(0, 0.09, 50);
-        } else {
-            // Still obstacle, continue turning left
-            setAngle(-PI/2, 0.09, 50);
-        }
-    } 
-    // If the vehicle is near the top of the arena (Y > 1.35)
-    else if (Y > 1.35) {
-        // Turn right (toward the center)
+    double threshold = 0.09;
+       
+    // Depending on if robot is below or above, turn left or right from default theta.
+    if (Y < finalY) {
         setAngle(PI/2, 0.09, 50);
-        
-        // Move until Y reaches approximately 1.0 (center zone)
-        while (Y > 1.0) {
-            Tank.setLeftMotorPWM(pwm);
-            Tank.setRightMotorPWM(pwm);
-            Y = Enes100.getY();
-        }
-        
-        // Check if there's still an obstacle
-        if (Tank.readDistanceSensor(1) > 0.2) {
-            // No obstacle, continue forward
-            setAngle(0, 0.09, 50);
-        } else {
-            // Still obstacle, continue turning right
-            setAngle(PI/2, 0.09, 50);
-        }
-    }
-    // If the vehicle is in the middle zone (0.65 <= Y <= 1.35)
-    else {
-        // Choose to go left arbitrarily
+    } else {
         setAngle(-PI/2, 0.09, 50);
-        
-        // Move for a bit to get around the obstacle
-        for (int i = 0; i < 100; i++) {
-            Tank.setLeftMotorPWM(pwm);
-            Tank.setRightMotorPWM(pwm);
-            delay(10); // Move for 1 second total
-        }
-        
-        // Check if there's still an obstacle
-        if (Tank.readDistanceSensor(1) > 0.2) {
-            // No obstacle, continue forward
-            setAngle(0, 0.09, 50);
-        }
     }
     
-    // Reset vehicle to forward orientation
+    // If Y is not in targetCoorX. 
+    while (!(Y < (finalY + threshold) && Y > (finalY - threshold))) {
+        Tank.setLeftMotorPWM(pwm);
+        Tank.setRightMotorPWM(pwm); 
+        
+        Y = Enes100.getY();
+    }
+
+    // Stop moving, face default theta.
     Tank.setLeftMotorPWM(0);
-    Tank.setRightMotorPWM(0);
+    Tank.setRightMotorPWM(0); 
+    setAngle(0, 0.09, 50);
+}
+
+// Function for getting through the arena.
+void navigatingArena() {
+    for (int i = 0; i < 2; i++) {
+            navigatingForward(0.2, 100);
+            double X = Enes100.getX();
+            double Y = Enes100.getY();
+            
+        if (X < 2.85) {
+            //MOVE AROUND OBSTACLE CODE
+        }
+    }
+}
+
+// Function for going under the limbo
+void limbo() {
+    // Call naviagetToCoor to Y = 1.3
+    navigatingCoorY(100, 1.4);
+    // call naviagetToCoor to X = 3.7
+    navigatingCoorX(100, 3.7);
 }
 
 // code for navigation with obstacles
@@ -144,7 +142,7 @@ void setup() {
     
     // Enes100.println("Starting driving");
     setAngle(0, 0.09, 50);
-    navigatingForward(0.2, 75);
+    limbo();
 }
 
 void loop() {
