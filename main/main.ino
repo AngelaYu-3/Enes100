@@ -8,11 +8,14 @@ void setup() {
   delay(1000);
   Serial.begin(9600);
   ultra_setup();
+  color_setup();
   //motor_setup();
 }
 
 void loop() {
   ultra_get_distance();
+  delay(1000);
+  is_red();
   // put your main code here, to run repeatedly:
     /*control_motor_A(100, true);
     delay(1000);
