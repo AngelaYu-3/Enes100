@@ -114,16 +114,33 @@ void navigatingCoorY(double pwm, double finalY) {
     setAngle(0, 0.09, 50);
 }
 
+// int left can only be either 1 (true) or -1 (false).
+void navigatingAroundObstacle(double pwm, int left) {
+    if (left == 1) {
+        navigatingCoorY(100, (Y + 0.5));
+    } else {
+        navigatingCoorY(100, (Y - 0.5));
+    }
+}
+
 // Function for getting through the arena.
 void navigatingArena() {
-    for (int i = 0; i < 2; i++) {
-            navigatingForward(0.2, 100);
-            double X = Enes100.getX();
-            double Y = Enes100.getY();
-            
-        if (X < 2.85) {
-            //MOVE AROUND OBSTACLE CODE
-        }
+    navigatingCoorY(150, 0.5) {
+    while (X <= 1.3) {
+        navigatingForward(0.2, 100);
+        double X = Enes100.getX();
+
+        navigatingCoorY(100, (Y + 0.5));
+        double X = Enes100.getX();
+    }
+    
+    navigatingCoorY(150, 0.5) {
+    while (X <= 2.85) {
+        navigatingForward(0.2, 100);
+        double X = Enes100.getX();
+
+        navigatingCoorY(100, (Y + 0.5));
+        double X = Enes100.getX();
     }
 }
 
@@ -132,7 +149,7 @@ void limbo() {
     // Call naviagetToCoor to Y = 1.3
     navigatingCoorY(100, 1.4);
     // call naviagetToCoor to X = 3.7
-    navigatingCoorX(100, 3.7);
+    navigatingForward(0.2, 100);
 }
 
 // code for navigation with obstacles
@@ -140,9 +157,12 @@ void setup() {
     Enes100.begin("Simulator", CRASH_SITE, 3, 8, 9);
     Tank.begin();
     
-    // Enes100.println("Starting driving");
+    // Start facing towards the right.
     setAngle(0, 0.09, 50);
-    limbo();
+    // Start at the bottom of the map (y=0.5).
+    navigatingArena();
+    // navigatingCoorX(150, 0.5) {
+    // limbo();
 }
 
 void loop() {
