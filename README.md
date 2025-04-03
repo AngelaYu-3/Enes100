@@ -23,7 +23,7 @@ https://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
 
 TCS3200 Color Sensor:
 
-](https://wiki.dfrobot.com/TCS3200_Color_Sensor__SKU_SEN0101_)
+https://wiki.dfrobot.com/TCS3200_Color_Sensor__SKU_SEN0101_
 
 ESP8266 ESP-01 Wifi Module:
 
