@@ -2,6 +2,19 @@
 #include "Enes100.h"
 #include "Tank.h"
 
+const double first_obstacle_xcoor = 1.7;
+const double second_obstacle_xcoor = 2.5;
+const double bottom_obstacle = 0.5;
+const double middle_obstacle = 1.0;
+const double top_obstacle = 1.5;
+const double limbo_start_coor = 1.5;
+
+
+bool is_mission_done = true;
+bool is_obstacle_done = false;
+bool is_limbo_done = false;
+
+
 // this function calculates the most efficient direction counter or clockwise for the
 // OTV to move in to turn to a set angle
 double calculateEfficientAngle(int currAngle, int targetAngle) {
@@ -25,16 +38,12 @@ double calculateEfficientAngle(int currAngle, int targetAngle) {
 void setAngle(double targetAngle, double threshold, double pwm) {
     double currAngle = Enes100.getTheta();
     double rotAmount = calculateEfficientAngle(currAngle, targetAngle);
-    // Enes100.println(Enes100.getTheta());
-    
+
     while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
-        //Enes100.print(currAngle - targetAngle);
         if (currAngle - targetAngle > 0) {
-            // Enes100.print("print statement 1: ");
             Tank.setLeftMotorPWM(pwm);
             Tank.setRightMotorPWM(-pwm);
         } else if (currAngle - targetAngle < 0) {
-            // Enes100.println("print statement 2");
             Tank.setLeftMotorPWM(-pwm);
             Tank.setRightMotorPWM(pwm);
         } 
@@ -42,15 +51,10 @@ void setAngle(double targetAngle, double threshold, double pwm) {
     }
     Tank.setLeftMotorPWM(0);
     Tank.setRightMotorPWM(0);  
-    
-    // Enes100.println("Final angle: ");
-    // Enes100.print(Enes100.getTheta());    
 }
 
 // This function moves either forward or backward until there is a obstacle.
 void navigation(double pwm, double distFromObst) {
-    Enes100.println("start navigation method");
-
     double ultrasonicReading = Tank.readDistanceSensor(1);
         
         // While there is no obstacles, tank moves forward
@@ -63,14 +67,10 @@ void navigation(double pwm, double distFromObst) {
         // There is obstacles, so stop moving.
         Tank.setLeftMotorPWM(0);
         Tank.setRightMotorPWM(0); 
-    
-    Enes100.println("stopped navigation method");
-    }
+}
     
 // This function moves towards a specific X coordinate
 void navigatingCoorX(double pwm, double finalX) {
-    Enes100.println("start navigatingCoorX method");
-
     double X = Enes100.getX();
     double threshold = 0.08;
     // backward can only be either 1 (true) or -1 (false).
@@ -99,15 +99,10 @@ void navigatingCoorX(double pwm, double finalX) {
     if (backward == 1) {
         setAngle(0, 0.08, 50);
     }
-
-    Enes100.println("stopped navigatingCoorX method");
-
 }
     
 // This function moves towards a specific Y coordinate
 void navigatingCoorY(double pwm, double finalY) {
-    Enes100.println("start navigatingCoorY method");
-
     double Y = Enes100.getY();
     double threshold = 0.09;
        
@@ -130,104 +125,109 @@ void navigatingCoorY(double pwm, double finalY) {
     Tank.setLeftMotorPWM(0);
     Tank.setRightMotorPWM(0); 
     setAngle(0, 0.09, 50);
-    
-    Enes100.println("stopped navigatingCoorY method");
 }
 
-// navigate up one obstacle.
-double navigatingAroundObstacle(double pwm) {
-    Enes100.println("Starting avoiding obstacle method");
-    double Y = Enes100.getY();
-    Enes100.println("Y: ");
-    Enes100.print(Y);
+void navigatingAroundObstacle(double pwm) {
+    Enes100.println("Navigating around obstacles");
+    double currentX = Enes100.getX();
+    double currentY = Enes100.getY();
+    double ultrasonicReading;
     
-    double finalY = (Y + 0.5);
+    // Check if we've passed the second obstacle
+    if (currentX > second_obstacle_xcoor) {
+        is_obstacle_done = true;
+        Enes100.println("Obstacles cleared!");
+        return;
+    }
     
-    Enes100.println("final Y: ");
-    Enes100.print(finalY);
-
-
-    navigatingCoorY(pwm, finalY);
+    // // Always face forward (theta = 0)
+    // setAngle(0, 0.07, 50);
     
-    setAngle(0, 0.07, 50);
+    // Get current ultrasonic reading
     ultrasonicReading = Tank.readDistanceSensor(1);
     
-    Enes100.println("ultrasonicReading obstacles: ");  
-    Enes100.print(ultrasonicReading);
-    Enes100.println("stopped avoiding obstacle method");
-
-    return ultrasonicReading;
-}
-
-// Function for getting through the arena.
-void navigatingArena(double pwm) {
-    Enes100.println("start navigating around arena method");    
-
-    // Start at bottom of arena.
-    navigatingCoorY(pwm, 0.5); 
-    double ultrasonicReading = Tank.readDistanceSensor(1);
-
-    double currX = Enes100.getX();
-    
-    // Move forward first
-    navigation(pwm, 0.2);
-    currX = Enes100.getX();
+    // If obstacle detected in front 
+    if (ultrasonicReading != -1 && ultrasonicReading < 0.3) {
+        Tank.setLeftMotorPWM(0);
+        Tank.setRightMotorPWM(0);
         
-    // When stopped check if its before X = 1.9. 
-    // If no, avoid obstacles (until theres no obstacle in front).
-    if (currX < 1.9) {
-        while ((ultrasonicReading <= 0.2) && (ultrasonicReading != -1)) {
-            ultrasonicReading = navigatingAroundObstacle(pwm);
+        // If not at the top, move up by 0.5
+        if (currentY < top_obstacle) {
+            Enes100.println("Obstacle detected, moving up by 0.5");
+            navigatingCoorY(pwm, currentY + 0.5);
+        } 
+        // If at the top, start moving down by 0.5
+        else {
+            Enes100.println("At top, moving down by 0.5");
+            navigatingCoorY(pwm, currentY - 0.5);
         }
-        
-        // Move to Y = 2.6.
-        navigatingCoorY(pwm, 2.6); 
-    }
-        
-    // Check its after X = 2.6.
-    // If no, avoid obstacles and move to X = 2.6.
-    currX = Enes100.getX();
-    if (currX < 2.6) {
-        // reset starting point to Y = 0.5.
-        navigatingCoorY(pwm, 0.5); 
-        while ((ultrasonicReading <= 0.2) && (ultrasonicReading != -1)) {
-            ultrasonicReading = navigatingAroundObstacle(pwm);
-        }
-        navigatingCoorY(pwm, 2.6); 
+    } 
+    // No obstacle detected, continue moving forward
+    else {
+        Enes100.println("Path clear, moving forward");
+        Tank.setLeftMotorPWM(pwm);
+        Tank.setRightMotorPWM(pwm);
+        delay(150); // Move forward for a short time before checking again
     }
     
-    Enes100.println("stopped navigating around obstacles method");    
+    // Check if we've passed the second obstacle
+    currentX = Enes100.getX();
+    if (currentX > second_obstacle_xcoor) {
+        is_obstacle_done = true;
+        Enes100.println("Obstacles cleared!");
+        
+        // Once obstacles are cleared, prepare for limbo
+        navigatingCoorY(pwm, bottom_obstacle);
+    }
 }
 
 // Function for going under the limbo
-void limbo() {
-    // Call naviagetToCoor to Y = 1.3
-    navigatingCoorY(100, 1.4);
-    // call naviagetToCoor to X = 3.7
-    navigation(0.2, 100);
+void limbo(double pwm) {
+    Enes100.println("Navigating past limbo");
+    navigatingCoorY(pwm, limbo_start_coor);
+    navigation(pwm, 0.2);
+    
+    Enes100.println("Limbo cleared!");
+    is_limbo_done = true;
 }
 
 // code for navigation with obstacles
 void setup() {
     Enes100.begin("Simulator", CRASH_SITE, 3, 8, 9);
     Tank.begin();
-    Enes100.println("Start.");    
-    
-    // setAngle(0, 0.07, 50);
-    // Enes100.println("Angle set to 0.");   
-    
-    navigatingArena(200);
-    Enes100.println("Finished avoiding obstacles.");    
-    // limbo();
-    Enes100.println("Done.");    
 
+    // // Always start facing theta = 0.
+    // setAngle(0, 0.07, 50);
+    // Always start at bottom obstacles
+    navigatingCoorY(250, bottom_obstacle);
 }
 
 void loop() {
-    // delay(1000);
-    // Enes100.print("Ultrasonic Reading: ");
-    // Enes100.println(Tank.readDistanceSensor(1));
-    // Enes100.print("X = "); Enes100.println(Enes100.getX());
-    // Enes100.print("Y = "); Enes100.println(Enes100.getY());
-    // Enes100.print("Theta = "); Enes100.println(Enes100.getTheta());
+    // Read and print sensor data on every loop iteration
+    Enes100.print("Ultrasonic Reading: ");
+    Enes100.println(Tank.readDistanceSensor(1));
+    
+    Enes100.print("X = "); 
+    Enes100.println(Enes100.getX());
+    
+    Enes100.print("Y = "); 
+    Enes100.println(Enes100.getY());
+    
+    Enes100.print("Theta = "); 
+    Enes100.println(Enes100.getTheta());
+    
+    // Complete mission, currently hard coded to always be true
+    if (!is_mission_done) {
+        mission();
+    } else if (!is_obstacle_done) {
+    // The code for obstacles is considered finished after we pass the second obstacle
+        navigatingAroundObstacle(250);
+    } else if (!is_limbo_done) {    // Done last
+        limbo(250);
+    } else {
+        Tank.setLeftMotorPWM(0);
+        Tank.setRightMotorPWM(0); 
+    }
+    
+    delay(100); // 100ms delay for readability
 }
