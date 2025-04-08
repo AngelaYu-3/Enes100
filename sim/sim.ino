@@ -2,6 +2,8 @@
 #include "Enes100.h"
 #include "Tank.h"
 
+bool is_mission_done = true;
+
 // this function calculates the most efficient direction counter or clockwise for the
 // OTV to move in to turn to a set angle
 double calculateEfficientAngle(int currAngle, int targetAngle) {
@@ -161,6 +163,11 @@ double navigatingAroundObstacle(double pwm) {
 
 // Function for getting through the arena.
 void navigatingArena(double pwm) {
+    if (!is_mission_done) {
+        mission()
+    } else {
+        navigate();
+    }
     Enes100.println("start navigating around arena method");    
 
     // Start at bottom of arena.
@@ -199,6 +206,27 @@ void navigatingArena(double pwm) {
     Enes100.println("stopped navigating around obstacles method");    
 }
 
+void navigate() {
+    bool is_past_first = false;
+    // navigate past first obstacle Y-axis option
+    
+    // navigate past second obstacle Y-axis option
+    
+    /*
+     * move down to Y = 0.5 theta = 0
+     * move forward, see if obstacle there
+     * if obstacle there: slide up to Y += 0.5
+     * if obstacle at second position: slid up Y+=0.50
+     * keep straying up until you see nothing
+     * move forward until you see something
+     *
+     * stray downwards until you see nothing
+     * move forward
+     *
+     * move to where limbo is
+     */
+}
+
 // Function for going under the limbo
 void limbo() {
     // Call naviagetToCoor to Y = 1.3
@@ -213,10 +241,9 @@ void setup() {
     Tank.begin();
     Enes100.println("Start.");    
     
-    // setAngle(0, 0.07, 50);
-    // Enes100.println("Angle set to 0.");   
+    setAngle(0, 0.07, 50);
+    Enes100.println("Angle set to 0.");   
     
-    navigatingArena(200);
     Enes100.println("Finished avoiding obstacles.");    
     // limbo();
     Enes100.println("Done.");    
@@ -224,6 +251,15 @@ void setup() {
 }
 
 void loop() {
+    if (!is_mission_done) {
+        mission();
+    } else {
+        navigate();
+    }
+    
+    // set power off
+    
+    
     // delay(1000);
     // Enes100.print("Ultrasonic Reading: ");
     // Enes100.println(Tank.readDistanceSensor(1));
