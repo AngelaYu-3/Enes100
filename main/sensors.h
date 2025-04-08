@@ -93,7 +93,7 @@ bool is_red() {
 
 
 // wifi sensor
-#define marker_id = 205;
+#define marker_id = 734;
 #define room_num = 1116;
 #define TX_pin = 1;
 #define RX_pin = 0;
