@@ -1,5 +1,4 @@
-//#include <HCSR04.h>
-//#include
+#include "ENES100.h"
 
 // ultrasonic
 #define trig_pin 25
@@ -60,22 +59,22 @@ void get_colors() {
   digitalWrite(s2, LOW);
   digitalWrite(s3, LOW);
   red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
-  // Serial.print("red: ");
-  // Serial.println(red);
+  Serial.print("red: ");
+  Serial.println(red);
   delay(20);
   digitalWrite(s3, HIGH);
 
   digitalWrite(s3, HIGH);
   blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
-  // Serial.print("blue: ");
-  // Serial.println(blue);
+  Serial.print("blue: ");
+  Serial.println(blue);
   delay(20);
   digitalWrite(s3, HIGH);
 
   digitalWrite(s2, HIGH);
   green = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
-  // Serial.print("green: ");
-  // Serial.println(green);
+  Serial.print("green: ");
+  Serial.println(green);
   delay(20);
   digitalWrite(s3, HIGH);
 }
@@ -83,13 +82,51 @@ void get_colors() {
 bool is_red() {
   get_colors();
   Serial.print("isRed: ");
-  if ((red >= 10 && red <= 30) &&
-      (blue >= 30 && blue <= 90) &&
-      (green >= 30 && green <= 90)) {
+  if (green > 60) {
         Serial.println("true");
         return true;
   } else {
     Serial.println("false");
     return false;
   }
+}
+
+
+// wifi sensor
+#define marker_id = 205;
+#define room_num = 1116;
+#define TX_pin = 1;
+#define RX_pin = 0;
+
+void wifi_setup() {
+  Serial.begin(9600);
+  Enes100.begin("Space Crash", CRASH_SITE, marker_id, room_num, 3, 2);
+}
+
+float wifi_get_X() {
+  Enes100.print("X: ");
+  Enes100.println(Enes100.getX());
+  return Enes100.getX();
+}
+
+float wifi_get_Y() {
+  Enes100.print("Y: ");
+  Enes100.println(Enes100.getY());
+  return Enes100.getY();
+}
+
+float wifi_get_theta() {
+  Enes100.print("Theta: ");
+  Enes100.println(Enes100.getTheta());
+  return Enes100.getTheta();
+}
+
+// length is in mm
+void wifi_transmit_length(float length) {
+  Enes100.mission(LENGTH, length)
+}
+
+// heigght is in mm
+void wifi_transmit_height(float height) {
+  Enes100.mission(HEIGHT, height)
 }

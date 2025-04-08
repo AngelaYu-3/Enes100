@@ -135,3 +135,26 @@ void shift_right(int speed) {
   control_motor_D(speed, true); 
 }
 
+// this function makes the OTV turn to a certain angle 
+void setAngle(double targetAngle, double threshold, double pwm) {
+    double currAngle = Enes100.getTheta();
+    double rotAmount = calculateEfficientAngle(currAngle, targetAngle);
+    Enes100.println(Enes100.getTheta());
+    
+    while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
+        //Enes100.print(currAngle - targetAngle);
+        if (currAngle - targetAngle > 0) {
+            // Enes100.print("print statement 1: ");
+            turn_right()
+        } else if (currAngle - targetAngle < 0) {
+            // Enes100.println("print statement 2");
+            turn_left()
+        } 
+        currAngle = Enes100.getTheta();
+    }
+    stop_motors();  
+    
+    // Enes100.print("Final angle: ");
+    Enes100.println(Enes100.getTheta());    
+}
+
