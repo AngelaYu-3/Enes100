@@ -151,7 +151,7 @@ void navigatingAroundObstacle(double pwm) {
         // We're at the first obstacle column - force a stop and check
         Tank.setLeftMotorPWM(0);
         Tank.setRightMotorPWM(0);
-        delay(100); // Small delay to stabilize readings
+        delay(100);  
         
         // Make sure we're facing forward before checking
         setAngle(0, 0.07, 50);
@@ -180,7 +180,7 @@ void navigatingAroundObstacle(double pwm) {
         // We're at the second obstacle column - force a stop and check
         Tank.setLeftMotorPWM(0);
         Tank.setRightMotorPWM(0);
-        delay(100); // Small delay to stabilize readings
+        delay(100);  
         
         // Make sure we're facing forward before checking
         setAngle(0, 0.07, 50);
@@ -201,7 +201,7 @@ void navigatingAroundObstacle(double pwm) {
             Enes100.println("No obstacle detected at second column, continuing");
             Tank.setLeftMotorPWM(pwm);
             Tank.setRightMotorPWM(pwm);
-            delay(150);
+            delay(100);
         }
     }
     // Standard obstacle detection during general movement
@@ -225,7 +225,6 @@ void navigatingAroundObstacle(double pwm) {
         // Slow down when approaching known obstacle columns
         if ((currentX < first_obstacle_xcoor && currentX > first_obstacle_xcoor - 0.2) || 
             (currentX < second_obstacle_xcoor && currentX > second_obstacle_xcoor - 0.2)) {
-            Enes100.println("Approaching obstacle column, moving carefully");
             Tank.setLeftMotorPWM(pwm * 0.5);  // Move slower near obstacle columns
             Tank.setRightMotorPWM(pwm * 0.5);
         } else {
@@ -285,12 +284,12 @@ void loop() {
     } else if (!is_obstacle_done) {
     // The code for obstacles is considered finished after we pass the second obstacle
         navigatingAroundObstacle(250);
-    } else if (!is_limbo_done) {    // Done last
+    } else if (!is_limbo_done) {   
         limbo(250);
     } else {
         Tank.setLeftMotorPWM(0);
         Tank.setRightMotorPWM(0); 
     }
     
-    delay(100); // 100ms delay for readability
+    delay(100); 
 }
