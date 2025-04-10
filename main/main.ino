@@ -140,14 +140,72 @@ void navigatingAroundObstacle(double pwm) {
         return;
     }
     
-    // // Always face forward (theta = 0)
-    // setAngle(0, 0.07, 50);
+    // Always make sure we're facing forward
+    setAngle(0, 0.07, 50);
     
     // Get current ultrasonic reading
     ultrasonicReading = Tank.readDistanceSensor(1);
     
-    // If obstacle detected in front 
-    if (ultrasonicReading != -1 && ultrasonicReading < 0.3) {
+    // Specific handling for first obstacle column
+    if (abs(currentX - first_obstacle_xcoor) < 0.1) {
+        // We're at the first obstacle column - force a stop and check
+        Tank.setLeftMotorPWM(0);
+        Tank.setRightMotorPWM(0);
+        delay(100); // Small delay to stabilize readings
+        
+        // Make sure we're facing forward before checking
+        setAngle(0, 0.07, 50);
+        ultrasonicReading = Tank.readDistanceSensor(1);
+        
+        // Check if there's an obstacle
+        if (ultrasonicReading != -1 && ultrasonicReading < 20) {
+            // If not at the top, move up by 0.5
+            if (currentY < top_obstacle) {
+                Enes100.println("Obstacle at first column, moving up");
+                navigatingCoorY(pwm, currentY + 0.5);
+            } else {
+                Enes100.println("At top of first column, moving down");
+                navigatingCoorY(pwm, currentY - 0.5);
+            }
+        } else {
+            // No obstacle at this Y position, continue forward
+            Enes100.println("No obstacle detected at first column, continuing");
+            Tank.setLeftMotorPWM(pwm);
+            Tank.setRightMotorPWM(pwm);
+            delay(150);
+        }
+    } 
+    // Specific handling for second obstacle column
+    else if (abs(currentX - second_obstacle_xcoor) < 0.1) {
+        // We're at the second obstacle column - force a stop and check
+        Tank.setLeftMotorPWM(0);
+        Tank.setRightMotorPWM(0);
+        delay(100); // Small delay to stabilize readings
+        
+        // Make sure we're facing forward before checking
+        setAngle(0, 0.07, 50);
+        ultrasonicReading = Tank.readDistanceSensor(1);
+        
+        // Check if there's an obstacle
+        if (ultrasonicReading != -1 && ultrasonicReading < 20) {
+            // If not at the top, move up by 0.5
+            if (currentY < top_obstacle) {
+                Enes100.println("Obstacle at second column, moving up");
+                navigatingCoorY(pwm, currentY + 0.5);
+            } else {
+                Enes100.println("At top of second column, moving down");
+                navigatingCoorY(pwm, currentY - 0.5);
+            }
+        } else {
+            // No obstacle at this Y position, continue forward
+            Enes100.println("No obstacle detected at second column, continuing");
+            Tank.setLeftMotorPWM(pwm);
+            Tank.setRightMotorPWM(pwm);
+            delay(150);
+        }
+    }
+    // Standard obstacle detection during general movement
+    else if (ultrasonicReading != -1 && ultrasonicReading < 20) {
         Tank.setLeftMotorPWM(0);
         Tank.setRightMotorPWM(0);
         
@@ -162,12 +220,20 @@ void navigatingAroundObstacle(double pwm) {
             navigatingCoorY(pwm, currentY - 0.5);
         }
     } 
-    // No obstacle detected, continue moving forward
+    // No obstacle detected, continue moving forward with speed adjustment
     else {
-        Enes100.println("Path clear, moving forward");
-        Tank.setLeftMotorPWM(pwm);
-        Tank.setRightMotorPWM(pwm);
-        delay(150); // Move forward for a short time before checking again
+        // Slow down when approaching known obstacle columns
+        if ((currentX < first_obstacle_xcoor && currentX > first_obstacle_xcoor - 0.2) || 
+            (currentX < second_obstacle_xcoor && currentX > second_obstacle_xcoor - 0.2)) {
+            Enes100.println("Approaching obstacle column, moving carefully");
+            Tank.setLeftMotorPWM(pwm * 0.5);  // Move slower near obstacle columns
+            Tank.setRightMotorPWM(pwm * 0.5);
+        } else {
+            Enes100.println("Path clear, moving forward");
+            Tank.setLeftMotorPWM(pwm);
+            Tank.setRightMotorPWM(pwm);
+        }
+        delay(100);
     }
     
     // Check if we've passed the second obstacle
@@ -175,9 +241,6 @@ void navigatingAroundObstacle(double pwm) {
     if (currentX > second_obstacle_xcoor) {
         is_obstacle_done = true;
         Enes100.println("Obstacles cleared!");
-        
-        // Once obstacles are cleared, prepare for limbo
-        navigatingCoorY(pwm, bottom_obstacle);
     }
 }
 
