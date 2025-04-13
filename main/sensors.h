@@ -1,4 +1,4 @@
-#include "ENES100.h"
+#include "Enes100.h"
 
 // ultrasonic
 #define trig_pin 25
@@ -93,15 +93,6 @@ bool is_red() {
 
 
 // wifi sensor
-#define marker_id = 734;
-#define room_num = 1116;
-#define TX_pin = 1;
-#define RX_pin = 0;
-
-void wifi_setup() {
-  Serial.begin(9600);
-  Enes100.begin("Space Crash", CRASH_SITE, marker_id, room_num, 3, 2);
-}
 
 float wifi_get_X() {
   Enes100.print("X: ");
@@ -123,10 +114,10 @@ float wifi_get_theta() {
 
 // length is in mm
 void wifi_transmit_length(float length) {
-  Enes100.mission(LENGTH, length)
+  Enes100.mission(LENGTH, length);
 }
 
 // heigght is in mm
 void wifi_transmit_height(float height) {
-  Enes100.mission(HEIGHT, height)
+  Enes100.mission(HEIGHT, height);
 }

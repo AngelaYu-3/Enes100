@@ -1,3 +1,5 @@
+#include "Enes100.h"
+
 // motor A connections H-Bridge 1 (left-front)
 const int enA = 10;
 const int in1 = 31;
@@ -7,7 +9,6 @@ const int in2 = 33;
 const int enB = 8;
 const int in3 = 9;
 const int in4 = 35;
-
 // motor C connections H-Bridge 2 (left-back)
 const int enC = 0;
 const int in5 = 0;
@@ -135,6 +136,25 @@ void shift_right(int speed) {
   control_motor_D(speed, true); 
 }
 
+// this function calculates the most efficient direction counter or clockwise for the
+// OTV to move in to turn to a set angle
+double calculateEfficientAngle(int currAngle, int targetAngle) {
+    // currAngle = currAngle % 2*PI;
+    if (currAngle < 0) currAngle += 2*PI;
+    
+    // targetAngle = targetAngle % 2*PI;
+    if (targetAngle < 0) targetAngle += 2*PI;
+    
+    double cDistance = (targetAngle - currAngle + 2*PI);
+    double ccDistance = (currAngle - targetAngle + 2*PI);
+    
+    if (cDistance <= ccDistance) {
+        return cDistance;
+    } else {
+        return -ccDistance;
+    }
+}
+
 // this function makes the OTV turn to a certain angle 
 void setAngle(double targetAngle, double threshold, double pwm) {
     double currAngle = Enes100.getTheta();
@@ -145,10 +165,10 @@ void setAngle(double targetAngle, double threshold, double pwm) {
         //Enes100.print(currAngle - targetAngle);
         if (currAngle - targetAngle > 0) {
             // Enes100.print("print statement 1: ");
-            turn_right()
+            turn_right(100);
         } else if (currAngle - targetAngle < 0) {
             // Enes100.println("print statement 2");
-            turn_left()
+            turn_left(100);
         } 
         currAngle = Enes100.getTheta();
     }
