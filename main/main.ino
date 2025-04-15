@@ -14,10 +14,6 @@ void setup() {
   // ultra_setup();
   // color_setup();
   motor_setup();
-
-  // *** Navigation Code ***
-  // Always start at bottom obstacles
-  // navigatingCoorY(250, bottom_obstacle);
 }
 
 void loop() {
@@ -77,9 +73,9 @@ void loop() {
         mission();
     } else if (!is_obstacle_done) {
     // The code for obstacles is considered finished after we pass the second obstacle
-        nav.navigatingAroundObstacle(250);
+        obstacle.navigatingAroundObstacle(250);
     } else if (!is_limbo_done) {   
-        nav.limbo(250);
+        limbo.limbo(250);
     } else {
         movement.stop_motors();
     }
