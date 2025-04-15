@@ -3,6 +3,8 @@
 #include "nav.h"
 
 bool is_mission_done = false;
+bool is_obstacle_done = false;
+bool is_limbo_done = false;
 
 void setup() {
   // put your setup code here, to run once:
@@ -13,6 +15,7 @@ void setup() {
   // color_setup();
   motor_setup();
 
+  // *** Navigation Code ***
   // Always start at bottom obstacles
   // navigatingCoorY(250, bottom_obstacle);
 }
@@ -55,7 +58,7 @@ void loop() {
   // delay(1000);
   // stop_motor_A();
 
-  // **** navigation code ****
+  // **** Navigation Code ****
   // Read and print sensor data on every loop iteration
     Enes100.print("Ultrasonic Reading: ");
     Enes100.println(Tank.readDistanceSensor(1));

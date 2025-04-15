@@ -9,9 +9,6 @@ const double middle_obstacle = 1.0;
 const double top_obstacle = 1.5;
 const double limbo_start_coor = 1.5;
 
-bool is_obstacle_done = false;
-bool is_limbo_done = false;
-
 // This function moves either forward or backward until there is a obstacle.
 void navigation(double pwm, double distFromObst) {
     double ultrasonicReading = sensor.ultra_get_distance();
