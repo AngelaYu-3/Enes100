@@ -1,46 +1,57 @@
 #include "Enes100.h"
 
-// motor A connections H-Bridge 1 (left-front)
+// motor A connections H-Bridge 1 (back-left)
 const int enA = 10;
-const int in1 = 31;
-const int in2 = 33;
+const int in1 = 9;
+const int in2 = 28;
 
-// motor B connections H-Bridge 1 (right-front)
+// motor B connections H-Bridge 1 (back-right)
 const int enB = 8;
-const int in3 = 9;
-const int in4 = 35;
-// motor C connections H-Bridge 2 (left-back)
-const int enC = 0;
-const int in5 = 0;
-const int in6 = 0;
+const int in3 = 30;
+const int in4 = 32;
 
-// motor D connections H-Bridge 3 (right-back)
-const int enD = 0;
-const int in7 = 0;
-const int in8 = 0;
+// motor C connections H-Bridge 2 (right-back)
+const int enC = 7;
+const int in5 = 29;
+const int in6 = 31;
+
+// motor D connections H-Bridge 2 (left-back)
+const int enD = 5;
+const int in7 = 6;
+const int in8 = 33;
 
 void motor_setup() {
   // set all motor control pins to outputs
   pinMode(enA, OUTPUT);
   pinMode(enB, OUTPUT);
+  pinMode(enC, OUTPUT);
+  pinMode(enD, OUTPUT);
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
+  pinMode(in5, OUTPUT);
+  pinMode(in6, OUTPUT);
+  pinMode(in7, OUTPUT);
+  pinMode(in8, OUTPUT);
 
   // turn off motors - initial state
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
+  digitalWrite(in5, LOW);
+  digitalWrite(in6, LOW);
+  digitalWrite(in7, LOW);
+  digitalWrite(in8, LOW);
 }
 
 void control_motor_A(int speed, bool is_forward) {
   analogWrite(enA, speed);
 
   if (is_forward) {
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, LOW);
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, HIGH);
   } else {
     digitalWrite(in1, HIGH);
     digitalWrite(in2, LOW); 
@@ -54,8 +65,8 @@ void control_motor_B(int speed, bool is_forward) {
     digitalWrite(in3, LOW);
     digitalWrite(in4, HIGH);
   } else {
-    digitalWrite(in3, LOW);
-    digitalWrite(in4, HIGH); 
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW); 
   }
 }
 
@@ -63,8 +74,8 @@ void control_motor_C(int speed, bool is_forward) {
   analogWrite(enC, speed);
 
   if (is_forward) {
-    digitalWrite(in5, LOW);
-    digitalWrite(in6, HIGH);
+    digitalWrite(in5, HIGH);
+    digitalWrite(in6, LOW);
   } else {
     digitalWrite(in5, LOW);
     digitalWrite(in6, HIGH); 
@@ -75,8 +86,8 @@ void control_motor_D(int speed, bool is_forward) {
   analogWrite(enD, speed);
 
   if (is_forward) {
-    digitalWrite(in7, LOW);
-    digitalWrite(in8, HIGH);
+    digitalWrite(in7, HIGH);
+    digitalWrite(in8, LOW);
   } else {
     digitalWrite(in7, LOW);
     digitalWrite(in8, HIGH); 
