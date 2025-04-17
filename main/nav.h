@@ -17,7 +17,6 @@ void navigation(double pwm, double distFromObst) {
         
         // There is obstacles, so stop moving.
         stop_motors();  
-
 }
 
 // This function moves towards a specific X coordinate

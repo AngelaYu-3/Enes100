@@ -46,7 +46,7 @@ void navigatingAroundObstacle(double pwm) {
         // Get current ultrasonic reading
         double ultrasonicReading = ultra_get_distance();
         
-        if (ultrasonicReading != -1 && ultrasonicReading < 20) {
+        if (ultrasonicReading != -1 && ultrasonicReading < 0.20) {
             handleGeneralObstacle(pwm);
         } 
         else {
@@ -84,7 +84,7 @@ void handleFirstObstacleColumn(double pwm) {
     double currentY = wifi_get_Y();
 
     // Check if there's an obstacle
-    if (ultrasonicReading != -1 && ultrasonicReading < 20) {
+    if (ultrasonicReading != -1 && ultrasonicReading < 0.20) {
         // If not at the top, move up by 0.5
         if (currentY < top_obstacle) {
             // Enes100.println("Obstacle at first column, moving up");
@@ -113,7 +113,7 @@ void handleSecondObstacleColumn(double pwm) {
     double currentY = wifi_get_Y();
     
     // Check if there's an obstacle
-    if (ultrasonicReading != -1 && ultrasonicReading < 20) {
+    if (ultrasonicReading != -1 && ultrasonicReading < 0.20) {
         // If not at the top, move up by 0.5
         if (currentY < top_obstacle) {
             // Enes100.println("Obstacle at second column, moving up");

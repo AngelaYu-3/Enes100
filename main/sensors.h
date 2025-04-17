@@ -91,7 +91,6 @@ bool is_red() {
   }
 }
 
-
 // wifi sensor
 
 float wifi_get_X() {
