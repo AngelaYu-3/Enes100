@@ -24,17 +24,16 @@ void navigation(double pwm, double distFromObst) {
 void navigatingCoorX(double pwm, double finalX) {
     double X = wifi_get_X();
     double threshold = 0.08;
-    // backward can only be either 1 (true) or -1 (false).
-    int backward = -1;
+
+    // Make sure OTV is facing default theta.
+    setAngle(0, 0.09, 50);
        
-    if (X < finalX) {
-        setAngle(0, 0.09, 50);
-    } else {
-        setAngle(-PI, 0.09, 50);
-        backward = 1;
-    }
-    
-    // If X is not near coor
+    // If we need to move backward, negate pwm so wheel move backward.
+    if (X > finalX) {
+        pwm = -pwm;
+    } 
+
+    // If X is not near coor.
     while (!(X < (finalX + threshold) && X > (finalX - threshold))) {
         move_forward(pwm);
         
@@ -43,33 +42,28 @@ void navigatingCoorX(double pwm, double finalX) {
 
     // Stop moving.
     stop_motors();
-    
-    // Face defualt theta.
-    if (backward == 1) {
-        setAngle(0, 0.08, 50);
-    }
 }
 
 // This function moves towards a specific Y coordinate
 void navigatingCoorY(double pwm, double finalY) {
     double Y = wifi_get_Y();
     double threshold = 0.09;
-       
-    // Depending on if robot is below or above, turn left or right from default theta.
-    if (Y < finalY) {
-        setAngle(PI/2, 0.09, 50);
-    } else {
-        setAngle(-PI/2, 0.09, 50);
-    }
     
-    // If Y is not in targetCoorX. 
+    // Make sure OTV is facing default theta.
+    setAngle(0, 0.09, 50);
+
+    // If Y is not in targetCoorY. 
     while (!(Y < (finalY + threshold) && Y > (finalY - threshold))) {
-        move_forward(pwm);
+        // Depending on if robot is below or above, shift left or right from default theta.
+        if (Y < finalY) {
+            shift_left(pwm);
+        } else {
+            shift_right(pwm);
+        }
         
         Y = wifi_get_Y();
     }
 
     // Stop moving, face default theta.
     stop_motors(); 
-    setAngle(0, 0.09, 50);
 }
