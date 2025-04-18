@@ -1,21 +1,24 @@
-#include "Enes100.h"
+#ifndef MOVEMENT_H
+#define MOVEMENT_H
 
-// motor A connections H-Bridge 1 (back-left)
+#include "Enes100.h"
+// looking at robot from back
+// motor A connections H-Bridge 1 (back-right)
 const int enA = 10;
 const int in1 = 9;
 const int in2 = 28;
 
-// motor B connections H-Bridge 1 (back-right)
+// motor B connections H-Bridge 1 (back-left)
 const int enB = 8;
 const int in3 = 30;
 const int in4 = 32;
 
-// motor C connections H-Bridge 2 (right-back)
+// motor C connections H-Bridge 2 (front-right)
 const int enC = 7;
 const int in5 = 29;
 const int in6 = 31;
 
-// motor D connections H-Bridge 2 (left-back)
+// motor D connections H-Bridge 2 (front-left)
 const int enD = 5;
 const int in7 = 6;
 const int in8 = 33;
@@ -146,3 +149,5 @@ void shift_right(int speed) {
   control_motor_C(speed, false);
   control_motor_D(speed, true); 
 }
+
+#endif

@@ -1,30 +1,19 @@
+#ifndef MISSION_H
+#define MISSION_H
+
 #include "sensors.h"
-#include "movement.h"
-#include <VarSpeedServo.h>
+#include <Servo.h>
+#include "nav.h"
 
 const int servo_pin = 11;
-VarSpeedServo myServo;
-
-void mission() {
-  // check site A
-  if (check_site_A()) {
-    find_anomoly();
-    measure_anomoly();
-    fix_anomoly();
-  } else {
-    check_site_B();
-    find_anomoly();
-    measure_anomoly();
-    fix_anomoly();
-  }
-}
+Servo myServo;
 
 void arm_setup() {
   myServo.attach(servo_pin);
 }
 
-void move_arm(int degree, int speed) {
-  myServo.write(45, 10, true);
+void move_arm(int degree) {
+  myServo.write(degree);
   delay(1000);
 }
 
@@ -73,3 +62,19 @@ void measure_anomoly() {
 void fix_anomoly() {
 
 }
+
+void mission() {
+  // check site A
+  if (check_site_A()) {
+    find_anomoly();
+    measure_anomoly();
+    fix_anomoly();
+  } else {
+    check_site_B();
+    find_anomoly();
+    measure_anomoly();
+    fix_anomoly();
+  }
+}
+
+#endif
