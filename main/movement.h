@@ -3,12 +3,12 @@
 
 #include "Enes100.h"
 // looking at robot from back
-// motor A connections H-Bridge 1 (front-right)
+// motor A connections H-Bridge 1 (back-left)
 const int enA = 10;
 const int in1 = 9;
 const int in2 = 28;
 
-// motor B connections H-Bridge 1 (back-left)
+// motor B connections H-Bridge 1 (back-right)
 const int enB = 8;
 const int in3 = 30;
 const int in4 = 32;
@@ -123,29 +123,29 @@ void move_backward(int speed) {
 }
 
 void turn_left(int speed) {
-  control_motor_A(speed, true);
+  control_motor_A(speed, false);
   control_motor_C(speed, true);
-  control_motor_B(speed, false);
+  control_motor_B(speed, true);
   control_motor_D(speed, false);
 }
 
 void turn_right(int speed) {
-  control_motor_A(speed, false);
+  control_motor_A(speed, true);
   control_motor_C(speed, false);
-  control_motor_B(speed, true);
+  control_motor_B(speed, false);
   control_motor_D(speed, true);
 }
 
 void shift_left(int speed) {
-  control_motor_A(speed, false);
-  control_motor_B(speed, true);
+  control_motor_A(speed, true);
+  control_motor_B(speed, false);
   control_motor_C(speed, true);
   control_motor_D(speed, false);
 }
 
 void shift_right(int speed) {
-  control_motor_A(speed, true);
-  control_motor_B(speed, false);
+  control_motor_A(speed, false);
+  control_motor_B(speed, true);
   control_motor_C(speed, false);
   control_motor_D(speed, true); 
 }

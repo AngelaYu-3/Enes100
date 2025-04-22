@@ -2,19 +2,20 @@
 #define MISSION_H
 
 #include "sensors.h"
-#include <Servo.h>
+#include <VarSpeedServo.h>
+#include <Arduino.h>
 #include "nav.h"
 
 const int servo_pin = 11;
-Servo myServo;
+VarSpeedServo myServo;
 
 void arm_setup() {
   myServo.attach(servo_pin);
 }
 
-void move_arm(int degree) {
-  myServo.write(degree);
-  delay(1000);
+void move_arm() {
+  myServo.slowmove(180 - 50, 50);
+  // delay(1000);
 }
 
 bool check_site_A() {
