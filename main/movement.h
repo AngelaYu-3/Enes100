@@ -3,7 +3,7 @@
 
 #include "Enes100.h"
 // looking at robot from back
-// motor A connections H-Bridge 1 (back-right)
+// motor A connections H-Bridge 1 (front-right)
 const int enA = 10;
 const int in1 = 9;
 const int in2 = 28;
@@ -53,7 +53,7 @@ void control_motor_A(int speed, bool is_forward) {
   analogWrite(enA, speed);
 
   if (is_forward) {
-    digitalWrite(in1, LOW);
+    digitalWrite(in1, LOW); // low
     digitalWrite(in2, HIGH);
   } else {
     digitalWrite(in1, HIGH);
@@ -65,7 +65,7 @@ void control_motor_B(int speed, bool is_forward) {
   analogWrite(enB, speed);
 
   if (is_forward) {
-    digitalWrite(in3, LOW);
+    digitalWrite(in3, LOW); // low
     digitalWrite(in4, HIGH);
   } else {
     digitalWrite(in3, HIGH);
@@ -78,7 +78,7 @@ void control_motor_C(int speed, bool is_forward) {
 
   if (is_forward) {
     digitalWrite(in5, HIGH);
-    digitalWrite(in6, LOW);
+    digitalWrite(in6, LOW); // low
   } else {
     digitalWrite(in5, LOW);
     digitalWrite(in6, HIGH); 
@@ -90,7 +90,7 @@ void control_motor_D(int speed, bool is_forward) {
 
   if (is_forward) {
     digitalWrite(in7, HIGH);
-    digitalWrite(in8, LOW);
+    digitalWrite(in8, LOW); // low
   } else {
     digitalWrite(in7, LOW);
     digitalWrite(in8, HIGH); 
