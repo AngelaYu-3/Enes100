@@ -13,6 +13,10 @@ const double half_small_length = 67.5;  // Half of the smaller length
 const double height = 270.0; 
 const double centerOfSite;
 
+void mission_setup() {
+  setAngle(0, 0.09, 50);
+}
+
 void mission() {
   // check site A
   if (check_site_A()) {
