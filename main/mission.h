@@ -2,20 +2,47 @@
 #define MISSION_H
 
 #include "sensors.h"
-#include <VarSpeedServo.h>
+#include "movement.h"
+#include <Servo.h>
 #include <Arduino.h>
-#include "nav.h"
+
 
 const int servo_pin = 11;
-VarSpeedServo myServo;
+Servo myServo;
 
 void arm_setup() {
   myServo.attach(servo_pin);
 }
 
 void move_arm() {
-  myServo.slowmove(180 - 50, 50);
+  int pos = 0;
+  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myServo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+    myServo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
   // delay(1000);
+}
+
+void move_to_dist(int dist, int threshold) {
+  int curr_dist = ultra_get_distance();
+  int low_thresh = dist - threshold;
+  int upper_thresh = dist + threshold;
+
+  while (curr_dist < low_thresh || curr_dist > upper_thresh) {
+    if (curr_dist < low_thresh) {
+      move_backward(100);
+    } else if (curr_dist > upper_thresh) {
+      move_forward(100);
+    }
+    curr_dist = ultra_get_distance();
+  }
+
+  stop_motors();
 }
 
 bool check_site_A() {

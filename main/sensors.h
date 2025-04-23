@@ -36,11 +36,11 @@ int ultra_get_distance() {
 
 
 // color sensor
-#define s0 5
-#define s1 29
-#define s2 6
-#define s3 7
-#define out 27
+#define s0 4
+#define s1 48
+#define s2 3
+#define s3 2
+#define out 50
 
 int red = 0;
 int blue = 0;
@@ -65,27 +65,26 @@ void get_colors() {
   Serial.print("red: ");
   Serial.println(red);
   delay(20);
-  digitalWrite(s3, HIGH);
 
+  digitalWrite(s2, LOW);
   digitalWrite(s3, HIGH);
   blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
   Serial.print("blue: ");
   Serial.println(blue);
   delay(20);
-  digitalWrite(s3, HIGH);
 
   digitalWrite(s2, HIGH);
+  digitalWrite(s3, HIGH);
   green = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
   Serial.print("green: ");
   Serial.println(green);
   delay(20);
-  digitalWrite(s3, HIGH);
 }
 
-bool is_red() {
+bool is_red() { // grey: 60 150 115.   red:  38 180 180.       grey:       red: 10 25 20
   get_colors();
   Serial.print("isRed: ");
-  if (green > 60) {
+  if (blue >= 34 && green >= 24) {
         Serial.println("true");
         return true;
   } else {
