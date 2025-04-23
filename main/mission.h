@@ -11,11 +11,22 @@ VarSpeedServo myServo;
 
 void arm_setup() {
   myServo.attach(servo_pin);
+
+  // Initialize the arm to starting position (parallel to floor)
+  myServo.write(0);
+  delay(1000); // Give time for the servo to reach position
 }
 
-void move_arm() {
-  myServo.slowmove(180 - 50, 50);
-  // delay(1000);
+// Move arm from parallel to perpendicular
+void arm_up() {
+  myServo.slowmove(90, 100);  // Move to 90 degrees at moderate speed
+  delay(1000);  // Wait for movement to complete
+}
+
+// Move arm from perpendicular back to parallel
+void arm_down() {
+  myServo.slowmove(0, 30);  // Move to 0 degrees at moderate speed
+  delay(1000);  // Wait for movement to complete
 }
 
 bool check_site_A() {
