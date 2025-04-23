@@ -1,3 +1,6 @@
+#ifndef SENSORS_H
+#define SENSORS_H
+
 #include "Enes100.h"
 
 // ultrasonic
@@ -121,3 +124,5 @@ void wifi_transmit_length(float length) {
 void wifi_transmit_height(float height) {
   Enes100.mission(HEIGHT, height);
 }
+
+#endif
