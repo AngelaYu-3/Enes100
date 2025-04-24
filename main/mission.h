@@ -25,17 +25,6 @@ void arm_setup() {
   delay(1000); // Give time for the servo to reach position
 }
 
-// Move arm from parallel to perpendicular
-void arm_up() {
-  myServo.slowmove(90, 100);  // Move to 90 degrees at moderate speed
-  delay(1000);  // Wait for movement to complete
-}
-
-// Move arm from perpendicular back to parallel
-void arm_down() {
-  myServo.slowmove(0, 30);  // Move to 0 degrees at moderate speed
-  delay(1000);  // Wait for movement to complete
-
 void move_arm() {
   int pos = 0;
   for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
@@ -51,7 +40,7 @@ void move_arm() {
 }
 
 bool check_site_A() {
-  setAngle(90, 5, 100);
+  set_angle(90, 5, 100);
   navigatingCoorX(100, 0.55);
   navigatingCoorY(100, 1.40);
 
@@ -63,7 +52,7 @@ bool check_site_A() {
 }
 
 void check_site_B() {
-  setAngle(-90, 5, 100);
+  set_angle(-90, 5, 100);
   navigatingCoorX(100, 0.55);
   navigatingCoorY(100, 0.50);
 }
@@ -102,7 +91,7 @@ void measure_anomoly(double pwm) {
   bool detectedRed = false;
   bool measurementComplete = false;
 
-  shiftLeft(pwm);
+  shift_left(pwm);
 
   while (!measurementComplete) {
     // Get current position to calculate distance moved
@@ -141,12 +130,12 @@ void mission() {
   // check site A
   if (check_site_A()) {
     find_anomoly();
-    measure_anomoly();
+    measure_anomoly(100);
     fix_anomoly();
   } else {
     check_site_B();
     find_anomoly();
-    measure_anomoly();
+    measure_anomoly(100);
     fix_anomoly();
   }
 }

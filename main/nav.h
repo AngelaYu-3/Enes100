@@ -33,7 +33,7 @@ void navigatingAroundObstacle(double pwm) {
     }
     
     // Always make sure we're facing forward
-    setAngle(0, 0.07, 50);
+    set_angle(0, 0.07, 50);
     
     // Get current ultrasonic reading
     ultrasonicReading = ultra_get_distance();
@@ -45,7 +45,7 @@ void navigatingAroundObstacle(double pwm) {
         delay(100);  
         
         // Make sure we're facing forward before checking
-        setAngle(0, 0.07, 50);
+        set_angle(0, 0.07, 50);
         ultrasonicReading = ultra_get_distance();
 
         // Check if there's an obstacle
@@ -72,7 +72,7 @@ void navigatingAroundObstacle(double pwm) {
         delay(100);  
         
         // Make sure we're facing forward before checking
-        setAngle(0, 0.07, 50);
+        set_angle(0, 0.07, 50);
         ultrasonicReading = ultra_get_distance();
         
         // Check if there's an obstacle

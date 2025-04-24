@@ -189,27 +189,26 @@ void move_to_dist(int dist, int threshold) {
 }
 
 // this function makes the OTV turn to a certain angle 
-void setAngle(double targetAngle, double threshold, double pwm) {
+void set_angle(double targetAngle, double threshold, double pwm) {
     double currAngle = Enes100.getTheta();
     double rotAmount = calculateEfficientAngle(currAngle, targetAngle);
     Enes100.println(Enes100.getTheta());
-
-    // Exit loop if we're within threshold
-    if (abs(rotAmount) <= threshold) {
-      break;
+    
+    while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
+        //Enes100.print(currAngle - targetAngle);
+        if (currAngle - targetAngle > 0) {
+            // Enes100.print("print statement 1: ");
+            turn_right(100);
+        } else if (currAngle - targetAngle < 0) {
+            // Enes100.println("print statement 2");
+            turn_left(100);
+        } 
+        currAngle = Enes100.getTheta();
     }
-  
-    // Use rotAmount to determine direction
-    if (rotAmount > 0) {
-      turn_left(pwm);  // Assuming positive rotation is counterclockwise
-    } else {
-      turn_right(pwm); // Assuming negative rotation is clockwise
-    }
-
     stop_motors();  
     
     // Enes100.print("Final angle: ");
-    Enes100.println(Enes100.getTheta());    
+    Enes100.println(Enes100.getTheta());     
 }
 
 // This function moves towards a specific X coordinate
@@ -218,7 +217,7 @@ void navigatingCoorX(double pwm, double finalX) {
     double threshold = 0.08;
 
     // Make sure OTV is facing default theta.
-    setAngle(PI/2, 0.09, 50);
+    set_angle(0, 0.09, 50);
        
     // If we need to move backward, negate pwm so wheel move backward.
     if (X > finalX) {
@@ -242,7 +241,7 @@ void navigatingCoorY(double pwm, double finalY) {
     double threshold = 0.09;
     
     // Make sure OTV is facing default theta.
-    setAngle(-PI/2, 0.5, 50);
+    set_angle(0, 0.09, 50);
 
     // If Y is not in targetCoorY. 
     while (!(Y < (finalY + threshold) && Y > (finalY - threshold))) {

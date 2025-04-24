@@ -14,7 +14,7 @@ void setup() {
   delay(500);
   // Serial.begin(9600);
   // color_setup();
-  // Serial.println("before wifi");
+  Serial.println("before wifi");
   Enes100.begin("Space Crash", CRASH_SITE, 734, 1116, 53, 52);
   Enes100.println("Connected...");
   // Serial.println("after wifi");
@@ -58,8 +58,22 @@ void loop() {
   wifi_get_theta();
   // wifi_transmit_length(100);
   // wifi_transmit_height(100);
+  set_angle(0, 0.09, 100);
 
-  navigatingCoorY(100, 1.5);
+  // static bool mission_complete = false;
+  
+  // if (!mission_complete) {
+    
+  //   // navigatingCoorX(0.55, 0.05); // Assuming 0.05 is your position threshold
+    
+  //   // set_angle(-PI/2, 0.09, 100);
+    
+  //   // move_to_dist(14, 2); // Using threshold of 2cm for more stability
+    
+  //   mission_complete = true; // Set flag to prevent repeated execution
+  // } else {
+  //   stop_motors();
+  // }
 
   // **** ultrasonic test ****
   //ultra_get_distance();
