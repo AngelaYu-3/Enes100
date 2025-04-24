@@ -153,7 +153,7 @@ void shift_right(int speed) {
 
 // this function calculates the most efficient direction counter or clockwise for the
 // OTV to move in to turn to a set angle
-double calculateEfficientAngle(int currAngle, int targetAngle) {
+double calculateEfficientAngle(double currAngle, double targetAngle) {
     // currAngle = currAngle % 2*PI;
     if (currAngle < 0) currAngle += 2*PI;
     
@@ -171,7 +171,7 @@ double calculateEfficientAngle(int currAngle, int targetAngle) {
 }
 
 // uses ultrasonic sensor to move to a set distance (cm)
-void move_to_dist(int dist, int threshold) {
+void move_to_dist(double dist, double threshold) {
   int curr_dist = ultra_get_distance();
   int low_thresh = dist - threshold;
   int upper_thresh = dist + threshold;
@@ -195,18 +195,21 @@ void set_angle(double targetAngle, double threshold, double pwm) {
     Enes100.println(Enes100.getTheta());
     
     while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
-        //Enes100.print(currAngle - targetAngle);
-        if (currAngle - targetAngle > 0) {
-            // Enes100.print("print statement 1: ");
-            turn_right(100);
-        } else if (currAngle - targetAngle < 0) {
-            // Enes100.println("print statement 2");
-            turn_left(100);
-        } 
+        rotAmount = calculateEfficientAngle(currAngle, targetAngle);
+        
+        if (rotAmount < 0) {
+            turn_right(pwm); // Use actual pwm parameter, not hardcoded 100
+        } else {
+            turn_left(pwm);
+        }
+        delay(20);
+
         currAngle = Enes100.getTheta();
+
     }
+
     stop_motors();  
-    
+
     // Enes100.print("Final angle: ");
     Enes100.println(Enes100.getTheta());     
 }
