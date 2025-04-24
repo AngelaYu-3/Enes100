@@ -170,6 +170,24 @@ double calculateEfficientAngle(int currAngle, int targetAngle) {
     }
 }
 
+// uses ultrasonic sensor to move to a set distance (cm)
+void move_to_dist(int dist, int threshold) {
+  int curr_dist = ultra_get_distance();
+  int low_thresh = dist - threshold;
+  int upper_thresh = dist + threshold;
+
+  while (curr_dist < low_thresh || curr_dist > upper_thresh) {
+    if (curr_dist < low_thresh) {
+      move_backward(100);
+    } else if (curr_dist > upper_thresh) {
+      move_forward(100);
+    }
+    curr_dist = ultra_get_distance();
+  }
+
+  stop_motors();
+}
+
 // this function makes the OTV turn to a certain angle 
 void setAngle(double targetAngle, double threshold, double pwm) {
     double currAngle = Enes100.getTheta();
@@ -187,6 +205,7 @@ void setAngle(double targetAngle, double threshold, double pwm) {
         } 
         currAngle = Enes100.getTheta();
     }
+
     stop_motors();  
     
     // Enes100.print("Final angle: ");
@@ -199,7 +218,7 @@ void navigatingCoorX(double pwm, double finalX) {
     double threshold = 0.08;
 
     // Make sure OTV is facing default theta.
-    setAngle(0, 0.09, 50);
+    setAngle(PI/2, 0.09, 50);
        
     // If we need to move backward, negate pwm so wheel move backward.
     if (X > finalX) {
@@ -223,7 +242,7 @@ void navigatingCoorY(double pwm, double finalY) {
     double threshold = 0.09;
     
     // Make sure OTV is facing default theta.
-    setAngle(0, 0.09, 50);
+    setAngle(-PI/2, 0.5, 50);
 
     // If Y is not in targetCoorY. 
     while (!(Y < (finalY + threshold) && Y > (finalY - threshold))) {

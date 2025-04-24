@@ -28,23 +28,6 @@ void move_arm() {
   // delay(1000);
 }
 
-void move_to_dist(int dist, int threshold) {
-  int curr_dist = ultra_get_distance();
-  int low_thresh = dist - threshold;
-  int upper_thresh = dist + threshold;
-
-  while (curr_dist < low_thresh || curr_dist > upper_thresh) {
-    if (curr_dist < low_thresh) {
-      move_backward(100);
-    } else if (curr_dist > upper_thresh) {
-      move_forward(100);
-    }
-    curr_dist = ultra_get_distance();
-  }
-
-  stop_motors();
-}
-
 bool check_site_A() {
   setAngle(90, 5, 100);
   navigatingCoorX(100, 0.55);
