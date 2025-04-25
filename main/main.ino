@@ -7,38 +7,36 @@
 // Servo myservo;
 // int pos = 0;
 
-// bool is_mission_done = false;
+bool is_mission_done = false;
 
 void setup() {
   // put your setup code here, to run once:
-  delay(500);
+  // delay(500);
   // Serial.begin(9600);
-  // color_setup();
-  Serial.println("before wifi");
   Enes100.begin("Space Crash", CRASH_SITE, 734, 1116, 53, 52);
   Enes100.println("Connected...");
-  // Serial.println("after wifi");
-  // myservo.attach(11);
   // motor_setup();
   // arm_setup();
-  // arm_setup();
   // ultra_setup();
-  // digitalWrite(11, OUTPUT);
-  // digitalWrite(13, OUTPUT);
-  
-  // pinMode(7, OUTPUT);
-  // pinMode(enA, OUTPUT);
-  // digitalWrite(in1, LOW);
-  // digitalWrite(in2, LOW);
-  // pinMode(enB, OUTPUT);
+  // color_setup();
+
 }
 
 void loop() {
-  // digitalWrite(11, HIGH);
-  // digitalWrite(13, HIGH);
-  // move_to_dist(14, 0);
-  // Serial.println("hello");
-  // move_forward(100);
+
+  // set_angle_simple(-1.5, 0);
+  // initial_setup();
+  
+  // *** WIFI TESTt ***
+  delay(1000);
+  wifi_get_X();
+  wifi_get_Y();
+  wifi_get_theta();
+
+  // **** COLOR TEST ***
+  // is_red();
+  // delay(1000);
+
 
   // *** arm test ***
   // myservo.write(90);
@@ -52,13 +50,8 @@ void loop() {
   //   delay(100);                       // waits 15ms for the servo to reach the position
   // }
 
-  // *** wifi test ***
-  wifi_get_X();
-  wifi_get_Y();
-  wifi_get_theta();
-  // wifi_transmit_length(100);
-  // wifi_transmit_height(100);
-  set_angle(0, 0.09, 100);
+
+  // turn_right(100);
 
   // static bool mission_complete = false;
   
@@ -77,10 +70,6 @@ void loop() {
 
   // **** ultrasonic test ****
   //ultra_get_distance();
-  // delay(1000);
-
-  // **** color test ***
-  // is_red();
   // delay(1000);
 
 }

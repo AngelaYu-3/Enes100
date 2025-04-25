@@ -17,6 +17,14 @@ const double half_small_length = 67.5;  // Half of the smaller length
 const double height = 270.0; 
 const double centerOfSite;
 
+// constants for finding crash site
+const double site_A_x = 0;
+const double site_A_y = 0;
+const double site_B_x = 0;
+const double site_B_y = 0;
+
+// x = 0.3 y = 1
+
 void arm_setup() {
   myServo.attach(servo_pin);
 
@@ -39,105 +47,115 @@ void move_arm() {
   // delay(1000);
 }
 
-bool check_site_A() {
-  set_angle(90, 5, 100);
-  navigatingCoorX(100, 0.55);
-  navigatingCoorY(100, 1.40);
-
-  if (ultra_get_distance() != 0) {
-    return true;
-  }
-
-  return false;
-}
-
-void check_site_B() {
-  set_angle(-90, 5, 100);
-  navigatingCoorX(100, 0.55);
-  navigatingCoorY(100, 0.50);
-}
-
-bool find_anomoly() {
-  if (is_red()) {
-    return true;
-  } else if (check_site_A()){
-    while (!is_red()) {
-      // back out
-      navigatingCoorY(100, 1.30);
-      // rotate
-      // move forward
-      // check is red
-      // if red stop return true
-      // else continue in while loop
-    }
+void initial_setup() {
+  if (Enes100.getX() < 1) {
+    nav_x(100, 1, false);
   } else {
-    while (!is_red()) {
-      navigatingCoorY(100, 0.60);
-    }
+    nav_x(100, 1, true);
   }
-}
 
-
-void measure_anomoly(double pwm) {
-  // move to x = center of block
-  navigatingCoorX(pwm, centerOfSite);
+  nav_y(100, 0.3, true);
   stop_motors();
-  delay(100);
-
-  // strafe left and continuously update the variable until the color sensor.
-  double length = small_length;   // Assume length is smaller length first.
-  double strafeDistance = 0.0;
-  double startY = wifi_get_Y();
-  bool detectedRed = false;
-  bool measurementComplete = false;
-
-  shift_left(pwm);
-
-  while (!measurementComplete) {
-    // Get current position to calculate distance moved
-    double currentY = wifi_get_Y();
-    strafeDistance = abs(currentY - startY) * 1000.0;  // Convert to mm
-    
-    // Check if the color sensor detects red
-    if (is_red()) {
-      detectedRed = true;
-    }
-
-    // If we were detecting red but no longer are, assume its smaller length, don't change the length value.
-    if (detectedRed && !is_red()) {
-      measurementComplete = true;
-    }
-    
-    // If we've strafed more than half of the small length and still detecting red, assume it's the larger length, change the length value;
-    if (strafeDistance > half_small_length && is_red()) {
-      length = large_length;
-      measurementComplete = true;
-    }
-  }
-    
-  delay(10);  
-    
-  stop_motors();
-  wifi_transmit_length(length);
-  wifi_transmit_height(height);
 }
 
-void fix_anomoly() {
+// bool check_site_A() {
+//   set_angle(90, 5, 100);
+//   navigatingCoorX(100, 0.55);
+//   navigatingCoorY(100, 1.40);
 
-}
+//   if (ultra_get_distance() != 0) {
+//     return true;
+//   }
 
-void mission() {
-  // check site A
-  if (check_site_A()) {
-    find_anomoly();
-    measure_anomoly(100);
-    fix_anomoly();
-  } else {
-    check_site_B();
-    find_anomoly();
-    measure_anomoly(100);
-    fix_anomoly();
-  }
-}
+//   return false;
+// }
+
+// void check_site_B() {
+//   set_angle(-90, 5, 100);
+//   navigatingCoorX(100, 0.55);
+//   navigatingCoorY(100, 0.50);
+// }
+
+// bool find_anomoly() {
+//   if (is_red()) {
+//     return true;
+//   } else if (check_site_A()){
+//     while (!is_red()) {
+//       // back out
+//       navigatingCoorY(100, 1.30);
+//       // rotate
+//       // move forward
+//       // check is red
+//       // if red stop return true
+//       // else continue in while loop
+//     }
+//   } else {
+//     while (!is_red()) {
+//       navigatingCoorY(100, 0.60);
+//     }
+//   }
+// }
+
+// // void measure_anomoly(double pwm) {
+// //   // move to x = center of block
+// //   navigatingCoorX(pwm, centerOfSite);
+// //   stop_motors();
+// //   delay(100);
+
+// //   // strafe left and continuously update the variable until the color sensor.
+// //   double length = small_length;   // Assume length is smaller length first.
+// //   double strafeDistance = 0.0;
+//   double startY = wifi_get_Y();
+//   bool detectedRed = false;
+//   bool measurementComplete = false;
+
+//   shift_left(pwm);
+
+//   while (!measurementComplete) {
+//     // Get current position to calculate distance moved
+//     double currentY = wifi_get_Y();
+//     strafeDistance = abs(currentY - startY) * 1000.0;  // Convert to mm
+    
+//     // Check if the color sensor detects red
+//     if (is_red()) {
+//       detectedRed = true;
+//     }
+
+//     // If we were detecting red but no longer are, assume its smaller length, don't change the length value.
+//     if (detectedRed && !is_red()) {
+//       measurementComplete = true;
+//     }
+    
+//     // If we've strafed more than half of the small length and still detecting red, assume it's the larger length, change the length value;
+//     if (strafeDistance > half_small_length && is_red()) {
+//       length = large_length;
+//       measurementComplete = true;
+//     }
+//   }
+    
+//   delay(10);  
+    
+//   stop_motors();
+//   wifi_transmit_length(length);
+//   wifi_transmit_height(height);
+// }
+
+// void fix_anomoly() {
+
+// }
+
+// void mission() {
+//   // check site A
+//   if (check_site_A()) {
+//     find_anomoly();
+//     measure_anomoly(100);
+//     fix_anomoly();
+//   } else {
+//     check_site_B();
+//     find_anomoly();
+//     measure_anomoly(100);
+//     fix_anomoly();
+//   }
+// }
 
 #endif

@@ -188,6 +188,21 @@ void move_to_dist(double dist, double threshold) {
   stop_motors();
 }
 
+// uses ultrasonic sensor to move to a set distance (cm)
+void set_angle_simple(double target_angle, double threshold) {
+  int curr_angle = Enes100.getTheta();
+  int low_thresh = target_angle - threshold;
+  int upper_thresh = target_angle + threshold;
+
+  while (curr_angle < low_thresh || curr_angle > upper_thresh) {
+    turn_right(100);
+    curr_angle = Enes100.getTheta();
+  }
+
+  // Enes100.println("STOPPING MOTORS!!");
+  stop_motors();
+}
+
 // this function makes the OTV turn to a certain angle 
 void set_angle(double targetAngle, double threshold, double pwm) {
     double currAngle = Enes100.getTheta();
@@ -215,23 +230,26 @@ void set_angle(double targetAngle, double threshold, double pwm) {
 }
 
 // This function moves towards a specific X coordinate
-void navigatingCoorX(double pwm, double finalX) {
-    double X = wifi_get_X();
-    double threshold = 0.08;
+void nav_x(double pwm, double final_x, bool is_forward) {
+    double x = Enes100.getX();
+    double threshold = 0.1;
 
     // Make sure OTV is facing default theta.
-    set_angle(0, 0.09, 50);
+    // set_angle(0, 0.09, 50);
        
     // If we need to move backward, negate pwm so wheel move backward.
-    if (X > finalX) {
-        pwm = -pwm;
-    } 
+    // if (X > finalX) {
+    //     pwm = -pwm;
+    // } 
 
     // If X is not near coor.
-    while (!(X < (finalX + threshold) && X > (finalX - threshold))) {
+    while (x < (final_x - threshold) || x > (final_x + threshold)) {
+      if (is_forward) {
         move_forward(pwm);
-        
-        X = wifi_get_X();
+      } else {
+        move_backward(pwm);
+      }
+      x = Enes100.getX();
     }
 
     // Stop moving.
@@ -239,23 +257,23 @@ void navigatingCoorX(double pwm, double finalX) {
 }
 
 // This function moves towards a specific Y coordinate
-void navigatingCoorY(double pwm, double finalY) {
-    double Y = wifi_get_Y();
-    double threshold = 0.09;
+void nav_y(double pwm, double final_y, bool is_left) {
+    double y = wifi_get_Y();
+    double threshold = 0.1;
     
     // Make sure OTV is facing default theta.
-    set_angle(0, 0.09, 50);
+    // set_angle(0, 0.09, 50);
 
     // If Y is not in targetCoorY. 
-    while (!(Y < (finalY + threshold) && Y > (finalY - threshold))) {
+    while (y < (final_y - threshold) || y > (final_y + threshold)) {
         // Depending on if robot is below or above, shift left or right from default theta.
-        if (Y < finalY) {
+        if (is_left) {
             shift_left(pwm);
         } else {
             shift_right(pwm);
         }
         
-        Y = wifi_get_Y();
+        y = wifi_get_Y();
     }
 
     // Stop moving, face default theta.
