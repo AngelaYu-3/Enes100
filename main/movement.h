@@ -151,25 +151,6 @@ void shift_right(int speed) {
   control_motor_D(speed, true); 
 }
 
-// this function calculates the most efficient direction counter or clockwise for the
-// OTV to move in to turn to a set angle
-double calculateEfficientAngle(double currAngle, double targetAngle) {
-    // currAngle = currAngle % 2*PI;
-    if (currAngle < 0) currAngle += 2*PI;
-    
-    // targetAngle = targetAngle % 2*PI;
-    if (targetAngle < 0) targetAngle += 2*PI;
-    
-    double cDistance = (targetAngle - currAngle + 2*PI);
-    double ccDistance = (currAngle - targetAngle + 2*PI);
-    
-    if (cDistance <= ccDistance) {
-        return cDistance;
-    } else {
-        return -ccDistance;
-    }
-}
-
 // uses ultrasonic sensor to move to a set distance (cm)
 void move_to_dist(double dist, double threshold) {
   int curr_dist = ultra_get_distance();
@@ -203,32 +184,6 @@ void set_angle_simple(double target_angle, double threshold) {
   stop_motors();
 }
 
-// this function makes the OTV turn to a certain angle 
-void set_angle(double targetAngle, double threshold, double pwm) {
-    double currAngle = Enes100.getTheta();
-    double rotAmount = calculateEfficientAngle(currAngle, targetAngle);
-    Enes100.println(Enes100.getTheta());
-    
-    while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
-        rotAmount = calculateEfficientAngle(currAngle, targetAngle);
-        
-        if (rotAmount < 0) {
-            turn_right(pwm); // Use actual pwm parameter, not hardcoded 100
-        } else {
-            turn_left(pwm);
-        }
-        delay(20);
-
-        currAngle = Enes100.getTheta();
-
-    }
-
-    stop_motors();  
-
-    // Enes100.print("Final angle: ");
-    Enes100.println(Enes100.getTheta());     
-}
-
 // This function moves towards a specific X coordinate
 void nav_x(double pwm, double final_x, bool is_forward) {
     double x = Enes100.getX();
@@ -257,8 +212,8 @@ void nav_x(double pwm, double final_x, bool is_forward) {
 }
 
 // This function moves towards a specific Y coordinate
-void nav_y(double pwm, double final_y, bool is_left) {
-    double y = wifi_get_Y();
+void nav_y(double pwm, double final_y) {
+    double y = Enes100.getY();
     double threshold = 0.1;
     
     // Make sure OTV is facing default theta.
@@ -267,18 +222,63 @@ void nav_y(double pwm, double final_y, bool is_left) {
     // If Y is not in targetCoorY. 
     while (y < (final_y - threshold) || y > (final_y + threshold)) {
         // Depending on if robot is below or above, shift left or right from default theta.
-        if (is_left) {
+        if (y < (final_y - threshold)) {
             shift_left(pwm);
-        } else {
+        } else if (y > (final_y + threshold)){
             shift_right(pwm);
         }
         
-        y = wifi_get_Y();
+        y = Enes100.getY();
     }
 
     // Stop moving, face default theta.
     stop_motors(); 
 }
+
+// // this function calculates the most efficient direction counter or clockwise for the
+// // OTV to move in to turn to a set angle
+// double calculateEfficientAngle(double currAngle, double targetAngle) {
+//     // currAngle = currAngle % 2*PI;
+//     if (currAngle < 0) currAngle += 2*PI;
+    
+//     // targetAngle = targetAngle % 2*PI;
+//     if (targetAngle < 0) targetAngle += 2*PI;
+    
+//     double cDistance = (targetAngle - currAngle + 2*PI);
+//     double ccDistance = (currAngle - targetAngle + 2*PI);
+    
+//     if (cDistance <= ccDistance) {
+//         return cDistance;
+//     } else {
+//         return -ccDistance;
+//     }
+// }
+
+// // this function makes the OTV turn to a certain angle 
+// void set_angle(double targetAngle, double threshold, double pwm) {
+//     double currAngle = Enes100.getTheta();
+//     double rotAmount = calculateEfficientAngle(currAngle, targetAngle);
+//     Enes100.println(Enes100.getTheta());
+    
+//     while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
+//         rotAmount = calculateEfficientAngle(currAngle, targetAngle);
+        
+//         if (rotAmount < 0) {
+//             turn_right(pwm); // Use actual pwm parameter, not hardcoded 100
+//         } else {
+//             turn_left(pwm);
+//         }
+//         delay(20);
+
+//         currAngle = Enes100.getTheta();
+
+//     }
+
+//     stop_motors();  
+
+//     // Enes100.print("Final angle: ");
+//     Enes100.println(Enes100.getTheta());     
+// }
 
 
 #endif

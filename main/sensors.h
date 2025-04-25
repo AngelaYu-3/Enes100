@@ -29,8 +29,8 @@ int ultra_get_distance() {
   // Serial.print("Duration: ");
   //Serial.println(duration);
   distance = (duration * 0.034) / 2;
-  Serial.print("Distance: ");
-  Serial.println(distance);
+  // Serial.print("Distance: ");
+  // Serial.println(distance);
   return distance;
 }
 

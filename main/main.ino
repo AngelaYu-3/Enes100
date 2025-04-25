@@ -11,31 +11,33 @@ bool is_mission_done = false;
 
 void setup() {
   // put your setup code here, to run once:
-  // delay(500);
-  // Serial.begin(9600);
-  Enes100.begin("Space Crash", CRASH_SITE, 734, 1116, 53, 52);
-  Enes100.println("Connected...");
+  delay(500);
+  Serial.begin(9600);
+  // Enes100.begin("Space Crash", CRASH_SITE, 734, 1116, 53, 52);
+  // Enes100.println("Connected...");
   // motor_setup();
   // arm_setup();
   // ultra_setup();
-  // color_setup();
+  color_setup();
 
 }
 
 void loop() {
 
   // set_angle_simple(-1.5, 0);
+  // nav_x(100, 1, true); moving forward until x = 100
+  // nav_y(100, 0.5, false); // straying right until y = 0.5
   // initial_setup();
   
   // *** WIFI TESTt ***
-  delay(1000);
-  wifi_get_X();
-  wifi_get_Y();
-  wifi_get_theta();
+  // delay(1000);
+  // wifi_get_X();
+  // wifi_get_Y();
+  // wifi_get_theta();
 
   // **** COLOR TEST ***
-  // is_red();
-  // delay(1000);
+  is_red();
+  delay(1000);
 
 
   // *** arm test ***
@@ -49,6 +51,9 @@ void loop() {
   //   myservo.write(pos);              // tell servo to go to position in variable 'pos'
   //   delay(100);                       // waits 15ms for the servo to reach the position
   // }
+
+
+
 
 
   // turn_right(100);

@@ -49,13 +49,12 @@ void move_arm() {
 
 void initial_setup() {
   if (Enes100.getX() < 1) {
-    nav_x(100, 1, false);
+    set_angle_simple(1.5, 0);
   } else {
-    nav_x(100, 1, true);
+    set_angle_simple(-1.5, 0);
   }
 
-  nav_y(100, 0.3, true);
-  stop_motors();
+  move_to_dist(13.5, 0);
 }
 
 // bool check_site_A() {
@@ -142,20 +141,6 @@ void initial_setup() {
 
 // void fix_anomoly() {
 
-// }
-
-// void mission() {
-//   // check site A
-//   if (check_site_A()) {
-//     find_anomoly();
-//     measure_anomoly(100);
-//     fix_anomoly();
-//   } else {
-//     check_site_B();
-//     find_anomoly();
-//     measure_anomoly(100);
-//     fix_anomoly();
-//   }
 // }
 
 #endif
