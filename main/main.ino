@@ -19,7 +19,6 @@ void setup() {
   // arm_setup();
   // ultra_setup();
   color_setup();
-
 }
 
 bool set_angle = false;
