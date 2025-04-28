@@ -99,18 +99,21 @@ bool is_red() { // grey: 60 150 115.   red:  38 180 180.       grey:       red: 
 float wifi_get_X() {
   Enes100.print("X: ");
   Enes100.println(Enes100.getX());
+  //delay(1000);
   return Enes100.getX();
 }
 
 float wifi_get_Y() {
   Enes100.print("Y: ");
   Enes100.println(Enes100.getY());
+  //delay(1000);
   return Enes100.getY();
 }
 
 float wifi_get_theta() {
   Enes100.print("Theta: ");
   Enes100.println(Enes100.getTheta());
+  //delay(1000);
   return Enes100.getTheta();
 }
 

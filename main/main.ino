@@ -11,10 +11,10 @@ bool is_mission_done = false;
 
 void setup() {
   // put your setup code here, to run once:
-  delay(500);
-  Serial.begin(9600);
-  // Enes100.begin("Space Crash", CRASH_SITE, 734, 1116, 53, 52);
-  // Enes100.println("Connected...");
+  // delay(500);
+  // Serial.begin(9600);
+  Enes100.begin("Space Crash", CRASH_SITE, 894, 1116, 50, 51);
+  Enes100.println("Connected...");
   // motor_setup();
   // arm_setup();
   // ultra_setup();
@@ -22,12 +22,24 @@ void setup() {
 
 }
 
+bool set_angle = false;
 void loop() {
 
-  // set_angle_simple(-1.5, 0);
+  measure_anomoly();
+  // set_angle_simple(-(PI/2), 0);
   // nav_x(100, 1, true); moving forward until x = 100
   // nav_y(100, 0.5, false); // straying right until y = 0.5
   // initial_setup();
+  
+  // if (Enes100.getTheta() < 0.3 && Enes100.getTheta() > -0.3) {
+  //     move_forward(100);
+  // } else {
+  //     set_angle_simple(0, 0.08);
+  // }
+
+  // Enes100.println(Enes100.getTheta());
+
+  // move_to_dist(13.5, 0);
   
   // *** WIFI TESTt ***
   // delay(1000);
@@ -36,8 +48,8 @@ void loop() {
   // wifi_get_theta();
 
   // **** COLOR TEST ***
-  is_red();
-  delay(1000);
+  // is_red();
+  // delay(1000);
 
 
   // *** arm test ***

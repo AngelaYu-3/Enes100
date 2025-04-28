@@ -48,32 +48,62 @@ void move_arm() {
 }
 
 void initial_setup() {
-  if (Enes100.getX() < 1) {
-    set_angle_simple(1.5, 0);
+  if (Enes100.getY() < 1) {
+    set_angle_simple(PI/2, 0);
   } else {
-    set_angle_simple(-1.5, 0);
+    set_angle_simple(-(PI/2), 0);
   }
-
+  
   move_to_dist(13.5, 0);
 }
 
-// bool check_site_A() {
-//   set_angle(90, 5, 100);
-//   navigatingCoorX(100, 0.55);
-//   navigatingCoorY(100, 1.40);
+void measure_anomoly() {
+  double height = 24;
+  double length1 = 18;
+  double length2 = 13.5;
 
-//   if (ultra_get_distance() != 0) {
-//     return true;
-//   }
+  double initial_x = Enes100.getX();
+  double final_x = 0;
+  double length;
 
-//   return false;
-// }
+  double dist = ultra_get_distance();
 
-// void check_site_B() {
-//   set_angle(-90, 5, 100);
-//   navigatingCoorX(100, 0.55);
-//   navigatingCoorY(100, 0.50);
-// }
+  while (dist < 20) {
+    shift_right(80);
+    dist = ultra_get_distance();
+  }
+
+  stop_motors();?
+  final_x = Enes100.getX();
+  length = 2 * abs(final_x - initial_x);
+
+  if (abs(length1 - length) < abs(length2 - length)) {
+    length = length1;
+  } else {
+    length = length2;
+  }
+
+  Enes100.println("final x: ");
+  Enes100.println(final_x);
+  wifi_transmit_height(height);
+  wifi_transmit_length(length);
+  delay(1000);
+}
+
+void find_anomoly() {
+  if (is_red()) {
+    stop_motors();
+  } else {
+    nav_y(100, 1);
+    if (Enes100.getX() < 1) {
+      nav_x(100, 0.1, true);
+    } else {
+      nav_x(100, 1.3, true);
+    }
+    set_angle_simple(3, 0);
+    move_to_dist(13.5, 0);
+  }
+}
 
 // bool find_anomoly() {
 //   if (is_red()) {

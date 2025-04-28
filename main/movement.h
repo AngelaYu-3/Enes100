@@ -157,13 +157,14 @@ void move_to_dist(double dist, double threshold) {
   int low_thresh = dist - threshold;
   int upper_thresh = dist + threshold;
 
-  while (curr_dist < low_thresh || curr_dist > upper_thresh) {
-    if (curr_dist < low_thresh) {
-      move_backward(100);
-    } else if (curr_dist > upper_thresh) {
+  while (curr_dist > upper_thresh) {
+    // if (curr_dist < low_thresh) {
+    //   move_backward(100);
+    // } else if (curr_dist > upper_thresh) {
       move_forward(100);
-    }
+    // }
     curr_dist = ultra_get_distance();
+    Enes100.println(curr_dist);
   }
 
   stop_motors();
@@ -171,16 +172,17 @@ void move_to_dist(double dist, double threshold) {
 
 // uses ultrasonic sensor to move to a set distance (cm)
 void set_angle_simple(double target_angle, double threshold) {
-  int curr_angle = Enes100.getTheta();
-  int low_thresh = target_angle - threshold;
-  int upper_thresh = target_angle + threshold;
+  double curr_angle = Enes100.getTheta();
+  double low_thresh = target_angle - threshold;
+  double upper_thresh = target_angle + threshold;
 
   while (curr_angle < low_thresh || curr_angle > upper_thresh) {
-    turn_right(100);
+    turn_right(60);
     curr_angle = Enes100.getTheta();
+    Enes100.println(curr_angle);
   }
 
-  // Enes100.println("STOPPING MOTORS!!");
+  
   stop_motors();
 }
 
