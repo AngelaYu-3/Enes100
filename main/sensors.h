@@ -41,6 +41,7 @@ int ultra_get_distance() {
 #define s2 3
 #define s3 2
 #define out 50
+#define LED 52
 
 int red = 0;
 int blue = 0;
@@ -51,11 +52,14 @@ void color_setup() {
   pinMode(s1, OUTPUT);
   pinMode(s2, OUTPUT);
   pinMode(s3, OUTPUT);
+  pinMode(LED, OUTPUT);
   pinMode(out, INPUT);
   Serial.begin(9600);
 
   digitalWrite(s0, HIGH);
+  
   digitalWrite(s1, HIGH);
+  digitalWrite(LED, HIGH);
 }
 
 void get_colors() {

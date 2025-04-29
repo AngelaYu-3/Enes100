@@ -19,14 +19,17 @@ const double mid_y = 1;
 /*
  * navigating past one set of obstacles
  */
-void nav_obs(int thresh) {
-  if (Enes100.getY() < (mid_y - thresh)) {
-    // shift left until you don't see something
-  } else if (Enes100.getY() > (mid_y + thresh)) {
-    // shift right until you don't see something
-  } else {
-    // shift right, if see something shift all the way left
-  }
+void nav_obs(double thresh, double coordinateThresh) {
+  int currentDistance = ultra_get_distance();
+    while (currentDistance <= 15 - thresh) {
+      if (Enes100.getY() > 1 + coordinateThresh) {
+        shift_right(80);
+      } else {
+        shift_left(80);
+      }
+      currentDistance = ultra_get_distance();
+    }
+    stop_motors();
 }
 
 /*
@@ -35,7 +38,7 @@ void nav_obs(int thresh) {
 void nav_all_obs() {
   // initial angle setup and move
   set_angle_simple(0, 0);
-  move_to_dist(15, 0);
+  move_to_dist(100, 15, 0);
 
   // need to go past both first and second obstacle
   if (Enes100.getX() <= first_obs_x) {
@@ -78,17 +81,16 @@ void getMeHome() {
 
   //will keep trying to see if obstacles exist until there are no more obstacles (we can get position by measuring)
   while (Enes100.getX() < no_more_obstacles - coordThresh) {
-    if (ultra_get_distance() <= 15 - thresh_ultrasonic) {
+    int currentDistance = ultra_get_distance();
+    while (currentDistance <= 15 - thresh_ultrasonic) {
       if (Enes100.getY() > 1 + coordThresh) {
-        shift_left(80);
-      } else {
         shift_right(80);
+      } else {
+        shift_left(80);
       }
-      setAngle_test(0, 0.05);
-      // will try to reset angle to 0 after each obstacle navigation to keep OTV going as straight as possible
+      currentDistance = ultra_get_distance();
+
     }
-
-
 
     for (int i = 0; i < 20; i++) {
       move_forward(100);

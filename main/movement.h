@@ -237,18 +237,18 @@ void nav_y(double pwm, double final_y) {
     stop_motors(); 
 }
 
-void setAngle_test(double targetAngle, double thresh) {
-  double currentAngle = Enes100.getTheta()
-  double low_thresh = target_angle - threshold;
-  double upper_thresh = target_angle + threshold;
+void setAngle(double targetAngle, double thresh) {
+  double currentAngle = Enes100.getTheta();
+  double low_thresh = targetAngle - thresh;
+  double upper_thresh = targetAngle + thresh;
 
-  while (currentAngle < low_thresh || curr_angle > upper_thresh) {
+  while (currentAngle < low_thresh || currentAngle > upper_thresh) {
     if (targetAngle - currentAngle < 0) {
       turn_right(60);
     } else {
       turn_left(60);
     } 
-    currrentAngle = Enes100.getTheta();
+    currentAngle = Enes100.getTheta();
     Enes100.println(currentAngle);
   }
   

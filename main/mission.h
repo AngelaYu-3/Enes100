@@ -54,7 +54,7 @@ void initial_setup() {
     set_angle_simple(-(PI/2), 0);
   }
   
-  move_to_dist(13.5, 0);
+  move_to_dist(100, 13.5, 0);
 }
 
 void measure_anomoly() {
@@ -73,7 +73,7 @@ void measure_anomoly() {
     dist = ultra_get_distance();
   }
 
-  stop_motors();?
+  stop_motors();
   final_x = Enes100.getX();
   length = 2 * abs(final_x - initial_x);
 
@@ -101,7 +101,7 @@ void find_anomoly() {
       nav_x(100, 1.3, true);
     }
     set_angle_simple(3, 0);
-    move_to_dist(13.5, 0);
+    move_to_dist(80, 13.5, 0);
   }
 }
 
