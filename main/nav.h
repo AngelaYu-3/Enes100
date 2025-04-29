@@ -70,38 +70,61 @@ void nav_all_obs() {
 //over here, i'm testing nav from point of mission, assuming mission is already completed. as such, 
 //i'm starting from roughly where the mission site is (can be at any angle, as it's resetting to zero)
 const int no_more_obstacles = 0;
-const int end_pos = 0;
+const int end_pos_x = 0;
+const double coordThresh = 0.05;
+const double thresh_ultrasonic = 0.5;
 void getMeHome() {
   setAngle_test(0, 0.05);
 
   //will keep trying to see if obstacles exist until there are no more obstacles (we can get position by measuring)
-  while (Enes100.getX() < no_more_obstacle) {
-    if (ultra_get_distance() <= 15) {
-      if (Enes100.getY() > 1) {
+  while (Enes100.getX() < no_more_obstacles - coordThresh) {
+    if (ultra_get_distance() <= 15 - thresh_ultrasonic) {
+      if (Enes100.getY() > 1 + coordThresh) {
         shift_left(80);
       } else {
         shift_right(80);
       }
       setAngle_test(0, 0.05);
       // will try to reset angle to 0 after each obstacle navigation to keep OTV going as straight as possible
-    } else {
-      move_forward(100);
-      delay(3000);
-      setAnle_test(0, 0.05);
-      // moves forward, going back to angle of 0 every 3 sec (delay can be adjusted)
     }
-  }
 
-  while (Enes100.getX() > no_more_obstacles && Enes100.getX() < end_pos) {
-    if (Enes100.getY() < limbo_y) {
+
+
+    for (int i = 0; i < 20; i++) {
+      move_forward(100);
+      delay(100);
+      if (ultra_get_distance() <= 15 - thresh_ultrasonic) {
+        break; // stop mid-move if obstacle appears
+      }
+    }
+    setAngle_test(0, 0.05);
+    // moves forward, going back to angle of 0 every 2 sec (delay can be adjusted)
+    Enes100.print("Current X: ");
+    Enes100.print(Enes100.getX());
+    Enes100.print("  Y: ");
+    Enes100.print(Enes100.getY());
+    }
+  
+
+
+
+  //executes after
+  while (Enes100.getX() > no_more_obstacles + coordThresh && Enes100.getX() < end_pos_x - coordThresh) {
+    if (Enes100.getY() < limbo_y - coordThresh) {
       shift_left(100);
-    } else if (Enes100.getY() > limbo_y) {
+    } else if (Enes100.getY() > limbo_y + coordThresh) {
       shift_right(100);
     }
 
-    move_forward(250); //SENDING ITTTTTTTT!!!! (we can change it later if it doesn't work lol)
+    //SENDING ITTTTTTTT!!!! (we can change it later if it doesn't work lol)
+    move_to_dist(250, 15, 0.5);
   }
 
+
+
+  if (Enes100.getX() >= end_pos_x + coordThresh) {
+    Enes100.println("Raj has arrived...")
+    stop();
 }
 
 
