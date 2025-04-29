@@ -7,7 +7,6 @@
 // Servo myservo;
 // int pos = 0;
 
-//some test
 
 bool is_mission_done = false;
 
@@ -37,6 +36,8 @@ void loop() {
   // } else {
   //     set_angle_simple(0, 0.08);
   // }
+
+
 
   // Enes100.println(Enes100.getTheta());
 

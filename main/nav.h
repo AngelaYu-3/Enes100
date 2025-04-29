@@ -14,7 +14,7 @@ const double pos_1 = 0;
 const double pos_2 = 0;
 const double pos_3 = 0;
 
-const double mid_y = 0;
+const double mid_y = 1;
 
 /*
  * navigating past one set of obstacles
@@ -64,6 +64,44 @@ void nav_all_obs() {
     nav_y(100, limbo_y);
     move_to_dist(15, 0);
   }
+}
+
+
+//over here, i'm testing nav from point of mission, assuming mission is already completed. as such, 
+//i'm starting from roughly where the mission site is (can be at any angle, as it's resetting to zero)
+const int no_more_obstacles = 0;
+const int end_pos = 0;
+void getMeHome() {
+  setAngle_test(0, 0.05);
+
+  //will keep trying to see if obstacles exist until there are no more obstacles (we can get position by measuring)
+  while (Enes100.getX() < no_more_obstacle) {
+    if (ultra_get_distance() <= 15) {
+      if (Enes100.getY() > 1) {
+        shift_left(80);
+      } else {
+        shift_right(80);
+      }
+      setAngle_test(0, 0.05);
+      // will try to reset angle to 0 after each obstacle navigation to keep OTV going as straight as possible
+    } else {
+      move_forward(100);
+      delay(3000);
+      setAnle_test(0, 0.05);
+      // moves forward, going back to angle of 0 every 3 sec (delay can be adjusted)
+    }
+  }
+
+  while (Enes100.getX() > no_more_obstacles && Enes100.getX() < end_pos) {
+    if (Enes100.getY() < limbo_y) {
+      shift_left(100);
+    } else if (Enes100.getY() > limbo_y) {
+      shift_right(100);
+    }
+
+    move_forward(250); //SENDING ITTTTTTTT!!!! (we can change it later if it doesn't work lol)
+  }
+
 }
 
 

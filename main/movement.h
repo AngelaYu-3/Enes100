@@ -237,6 +237,26 @@ void nav_y(double pwm, double final_y) {
     stop_motors(); 
 }
 
+void setAngle_test(double targetAngle, double thresh) {
+  double currentAngle = Enes100.getTheta()
+  double low_thresh = target_angle - threshold;
+  double upper_thresh = target_angle + threshold;
+
+  while (currentAngle < low_thresh || curr_angle > upper_thresh) {
+    if (targetAngle - currentAngle < 0) {
+      turn_right(60);
+    } else {
+      turn_left(60);
+    } 
+    currrentAngle = Enes100.getTheta();
+    Enes100.println(currentAngle);
+  }
+  
+  stop_motors();
+
+}
+
+
 // // this function calculates the most efficient direction counter or clockwise for the
 // // OTV to move in to turn to a set angle
 // double calculateEfficientAngle(double currAngle, double targetAngle) {
