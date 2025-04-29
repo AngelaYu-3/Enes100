@@ -37,60 +37,64 @@ int ultra_get_distance() {
 
 // color sensor
 #define s0 4
-#define s1 48
+#define s1 49
 #define s2 3
 #define s3 2
-#define out 50
+#define out 48
+#define LED 52
 
-int red = 0;
-int blue = 0;
-int green = 0;
+double red = 0;
+double blue = 0;
+double green = 0;
 
 void color_setup() {
   pinMode(s0, OUTPUT);
   pinMode(s1, OUTPUT);
   pinMode(s2, OUTPUT);
   pinMode(s3, OUTPUT);
+  pinMode(LED, OUTPUT);
   pinMode(out, INPUT);
   Serial.begin(9600);
 
   digitalWrite(s0, HIGH);
   digitalWrite(s1, HIGH);
+  digitalWrite(LED, HIGH);
 }
 
 void get_colors() {
   digitalWrite(s2, LOW);
   digitalWrite(s3, LOW);
-  red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
-  Serial.print("red: ");
-  Serial.println(red);
-  delay(20);
+  red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH) * 10;
+  Enes100.print("red: ");
+  Enes100.println(red);
+  delay(1000);
 
   digitalWrite(s2, LOW);
   digitalWrite(s3, HIGH);
-  blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
-  Serial.print("blue: ");
-  Serial.println(blue);
-  delay(20);
+  blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH) * 10;
+  Enes100.print("blue: ");
+  Enes100.println(blue);
+  delay(1000);
 
   digitalWrite(s2, HIGH);
   digitalWrite(s3, HIGH);
-  green = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
-  Serial.print("green: ");
-  Serial.println(green);
-  delay(20);
+  green = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH) * 10;
+  Enes100.print("green: ");
+  Enes100.println(green);
+  delay(1000);
 }
 
 bool is_red() { // grey: 60 150 115.   red:  38 180 180.       grey:       red: 10 25 20
   get_colors();
   Serial.print("isRed: ");
-  if (blue >= 34 && green >= 24) {
+  if (blue > 450 && green > 480) {
         Serial.println("true");
         return true;
   } else {
     Serial.println("false");
     return false;
   }
+  delay(1000);
 }
 
 

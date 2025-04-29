@@ -15,17 +15,25 @@ void setup() {
   // Serial.begin(9600);
   Enes100.begin("Space Crash", CRASH_SITE, 894, 1116, 50, 51);
   Enes100.println("Connected...");
+  delay(500);
   // motor_setup();
   // arm_setup();
   // ultra_setup();
   color_setup();
+  if (Enes100.getY() > 1) {
+    set_angle_simple(-(PI/2), 0.05);
+  } else {
+    set_angle_simple(PI/2, 0.05);
+  }
+  
+  move_to_dist(13.5, 0);
 }
 
 bool set_angle = false;
 void loop() {
-
-  measure_anomoly();
-  // set_angle_simple(-(PI/2), 0);
+  Enes100.println(is_red());
+  // Enes100.println(Enes100.getTheta());
+  // measure_anomoly();
   // nav_x(100, 1, true); moving forward until x = 100
   // nav_y(100, 0.5, false); // straying right until y = 0.5
   // initial_setup();
@@ -38,7 +46,7 @@ void loop() {
 
   // Enes100.println(Enes100.getTheta());
 
-  // move_to_dist(13.5, 0);
+
   
   // *** WIFI TESTt ***
   // delay(1000);

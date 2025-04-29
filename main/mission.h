@@ -58,9 +58,9 @@ void initial_setup() {
 }
 
 void measure_anomoly() {
-  double height = 24;
-  double length1 = 18;
-  double length2 = 13.5;
+  double height = 0.024;
+  double length1 = 0.018;
+  double length2 = 0.0135;
 
   double initial_x = Enes100.getX();
   double final_x = 0;
@@ -73,7 +73,7 @@ void measure_anomoly() {
     dist = ultra_get_distance();
   }
 
-  stop_motors();?
+  stop_motors();
   final_x = Enes100.getX();
   length = 2 * abs(final_x - initial_x);
 
