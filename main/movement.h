@@ -164,7 +164,12 @@ void move_to_dist(double pwm, double dist, double threshold) {
       move_forward(pwm);
     // }
     curr_dist = ultra_get_distance();
+<<<<<<< Updated upstream
     Enes100.println(curr_dist);
+=======
+    Enes100.print("moving to distance");
+    Enes100.print(curr_dist);
+>>>>>>> Stashed changes
   }
 
   stop_motors();

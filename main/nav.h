@@ -19,6 +19,7 @@ const double mid_y = 1;
 /*
  * navigating past one set of obstacles
  */
+<<<<<<< Updated upstream
 void nav_obs(double thresh, double coordinateThresh) {
   int currentDistance = ultra_get_distance();
     while (currentDistance <= 15 - thresh) {
@@ -39,36 +40,110 @@ void nav_all_obs() {
   // initial angle setup and move
   set_angle_simple(0, 0);
   move_to_dist(100, 15, 0);
+=======
+void nav_obs(double ultrasonicThresh, double coordinateThresh, int speed) {
+  int currentDistance = ultra_get_distance();
+  bool detectedObstacle = false;
+  bool strafeRight = false;
 
-  // need to go past both first and second obstacle
-  if (Enes100.getX() <= first_obs_x) {
-    nav_obs(0.8);
+  // Detect obstacle and choose strafe direction ONCE
+  if (Enes100.getY() > 1 + coordinateThresh) {
+    strafeRight = true;
+  } else {
+    strafeRight = false;
+  }
 
-    while (Enes100.getX() < second_obs_x) {
-      move_forward(100);
-      if (ultra_get_distance() <= 15) {
-        stop_motors();
-        nav_obs(0.8);
-      } 
-
-      if (Enes100.getX() > (second_obs_x + 0.5)) {
-        break;
-      }
+  while (currentDistance <= 15 - ultrasonicThresh) {
+    detectedObstacle = true;
+    Enes100.print("Obstacle detected! Strafing: ");
+    if (strafeRight) {
+      Enes00.print("right...");
+      shift_right(speed);
+    } else {
+      Enes100.print("left...")
+      shift_left(speed);
     }
-  } // only need to go past second obstacle
-  else (Enes100.getX() <= second_obs_x) {
-    nav_obs(0.8);
+    currentDistance = ultra_get_distance();
   }
 
-  // navigated through all obstacles and complete limbo
-  move_forward(100);
-  if (Enes100.getX() >= limbo_x) {
-    stop_motors();
-    nav_y(100, limbo_y);
-    move_to_dist(15, 0);
+  // After obstacle clears, strafe a little more to clear robot body
+  if (detectedObstacle == true) {
+    for (int i = 0; i < 10; i++) {
+      if (Enes100.getY() > 1 + coordinateThresh) {
+        shift_right(speed);
+      } else {
+        shift_left(speed);
+      }
+      delay(100);
+    }
   }
+
+  //stopping motors
+  stop_motors();
 }
 
+>>>>>>> Stashed changes
+
+//over here, i'm testing nav from point of mission, assuming mission is already completed. as such, 
+//i'm starting from roughly where the mission site is (can be at any angle, as it's resetting to zero)
+const int no_more_obstacles = 0;
+const int end_pos_x = 0;
+const double coordThresh = 0.05;
+const double thresh_ultrasonic = 0.5;
+void getMeHome() {
+  setAngle(0, 0.05);
+
+  //will keep trying to see if obstacles exist until there are no more obstacles (we can get position by measuring)
+  while (Enes100.getX() < no_more_obstacles - coordThresh) {
+    int currentDistance = ultra_get_distance();
+    while (currentDistance <= 15 - thresh_ultrasonic) {
+      if (Enes100.getY() > 1 + coordThresh) {
+        shift_right(80);
+      } else {
+        shift_left(80);
+      }
+      currentDistance = ultra_get_distance();
+
+    }
+
+    for (int i = 0; i < 20; i++) {
+      move_forward(100);
+      delay(100);
+      if (ultra_get_distance() <= 15 - thresh_ultrasonic) {
+        break; // stop mid-move if obstacle appears
+      }
+    }
+    setAngle(0, 0.05);
+    // moves forward, going back to angle of 0 every 2 sec (delay can be adjusted)
+    Enes100.print("Current X: ");
+    Enes100.print(Enes100.getX());
+    Enes100.print("  Y: ");
+    Enes100.print(Enes100.getY());
+    }
+  
+
+
+
+  //executes after
+  while (Enes100.getX() > no_more_obstacles + coordThresh && Enes100.getX() < end_pos_x - coordThresh) {
+    if (Enes100.getY() < limbo_y - coordThresh) {
+      shift_left(100);
+    } else if (Enes100.getY() > limbo_y + coordThresh) {
+      shift_right(100);
+    }
+
+    //SENDING ITTTTTTTT!!!! (we can change it later if it doesn't work lol)
+    move_to_dist(250, 15, 0.5);
+  }
+
+
+
+  if (Enes100.getX() >= end_pos_x + coordThresh) {
+    Enes100.println("Raj has arrived...");
+    }
+}
+
+<<<<<<< Updated upstream
 
 //over here, i'm testing nav from point of mission, assuming mission is already completed. as such, 
 //i'm starting from roughly where the mission site is (can be at any angle, as it's resetting to zero)
@@ -130,6 +205,8 @@ void getMeHome() {
 }
 
 
+=======
+>>>>>>> Stashed changes
 // const double first_obstacle_xcoor = 1.7;
 // const double second_obstacle_xcoor = 2.5;
 // const double bottom_obstacle = 0.5;

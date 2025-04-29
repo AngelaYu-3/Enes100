@@ -65,6 +65,7 @@ void color_setup() {
 void get_colors() {
   digitalWrite(s2, LOW);
   digitalWrite(s3, LOW);
+<<<<<<< Updated upstream
   red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
   Serial.print("red: ");
   Serial.println(red);
@@ -76,6 +77,23 @@ void get_colors() {
   Serial.print("blue: ");
   Serial.println(blue);
   delay(20);
+=======
+
+
+  red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH) * 10;
+  Enes100.print("red: ");
+  Enes100.println(red);
+  delay(20);
+
+
+  digitalWrite(s2, LOW);
+  digitalWrite(s3, HIGH);
+   blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH) * 10;
+  Enes100.print("blue: ");
+  Enes100.println(blue);
+  delay(20);
+
+>>>>>>> Stashed changes
 
   digitalWrite(s2, HIGH);
   digitalWrite(s3, HIGH);
@@ -95,6 +113,11 @@ bool is_red() { // grey: 60 150 115.   red:  38 180 180.       grey:       red: 
     Serial.println("false");
     return false;
   }
+<<<<<<< Updated upstream
+=======
+  
+  delay(1000);
+>>>>>>> Stashed changes
 }
 
 

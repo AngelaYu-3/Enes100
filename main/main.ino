@@ -2,6 +2,7 @@
 #include "sensors.h"
 #include "mission.h"
 #include "Enes100.h"
+#include "nav.h"
 #include <Servo.h>
 
 // Servo myservo;
@@ -19,6 +20,7 @@ void setup() {
   motor_setup();
   //arm_setup();
   ultra_setup();
+<<<<<<< Updated upstream
   color_setup();
 
 
@@ -26,14 +28,24 @@ void setup() {
 
 
 
+=======
+  //color_setup();
+
+
+  Enes100.println("Resetting angle...");
+>>>>>>> Stashed changes
   setAngle(0, 0.05);
 }
 
-bool set_angle = false;
 void loop() {
+<<<<<<< Updated upstream
 
   Enes100.println(get_ultra_distance());
   nav_obs(0.05, 0.05);
+=======
+  move_forward(100);
+  nav_obs(0.5,0.05, 100);
+>>>>>>> Stashed changes
   //measure_anomoly();
   // nav_x(100, 1, true); moving forward until x = 100
   // nav_y(100, 0.5, false); // straying right until y = 0.5
