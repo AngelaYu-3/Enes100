@@ -20,32 +20,18 @@ void setup() {
   motor_setup();
   //arm_setup();
   ultra_setup();
-<<<<<<< Updated upstream
-  color_setup();
-
-
-
-
-
-
-=======
   //color_setup();
 
 
   Enes100.println("Resetting angle...");
->>>>>>> Stashed changes
   setAngle(0, 0.05);
 }
 
 void loop() {
-<<<<<<< Updated upstream
 
-  Enes100.println(get_ultra_distance());
-  nav_obs(0.05, 0.05);
-=======
   move_forward(100);
   nav_obs(0.5,0.05, 100);
->>>>>>> Stashed changes
+
   //measure_anomoly();
   // nav_x(100, 1, true); moving forward until x = 100
   // nav_y(100, 0.5, false); // straying right until y = 0.5
@@ -70,8 +56,8 @@ void loop() {
   // wifi_get_theta();
 
   // **** COLOR TEST ***
-  is_red();
-  delay(1000);
+  // is_red();
+  // delay(1000);
 
 
   // *** arm test ***
@@ -110,5 +96,5 @@ void loop() {
   // **** ultrasonic test ****
   //ultra_get_distance();
   // delay(1000);
-
 }
+
