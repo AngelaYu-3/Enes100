@@ -6,21 +6,23 @@
 #include "Enes100.h"
 #include <Arduino.h>
 
+/*
+ * Functions for completing mission objectives: 
+ *    Objective I: finding anomoly
+ *    Objective II: fixing anomoly
+ *    Objective III: measuring height and length of anomoly
+ */
+
+
 // const int servo_pin = 11;
 // Servo myServo;
 
-// Constants for measure_anomoly
+// constants for measure_anomoly
 const double small_length = 135.0;  // The smaller possible length in mm
 const double large_length = 180.0;  // The larger possible length in mm
 const double half_small_length = 67.5;  // Half of the smaller length
 const double height = 270.0; 
 const double centerOfSite;
-
-// constants for finding crash site
-const double site_A_x = 0;
-const double site_A_y = 0;
-const double site_B_x = 0;
-const double site_B_y = 0;
 
 // x = 0.3 y = 1
 
@@ -45,7 +47,9 @@ const double site_B_y = 0;
 //   }
 // }
 
-/* measuring the length of the anomoly */
+/* 
+ * measuring the length of the anomoly
+ */
 void measure_anomoly() {
   double height = 0.024;
   double length1 = 0.018;
@@ -86,6 +90,9 @@ void measure_anomoly() {
   wifi_transmit_length(length);
 }
 
+/* 
+ * finding the anomoly
+ */
 void find_anomoly() {
   if (is_red()) {
     stop_motors();

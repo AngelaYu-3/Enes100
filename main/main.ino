@@ -6,48 +6,85 @@
 #include <Servo.h>
 
 const int servo_pin = 11;
-Servo myservo;
+Servo my_servo;
 int pos = 0;
-void setup() {
-  // put your setup code here, to run once:
-  // delay(500);
-  // Serial.begin(9600);
-  Enes100.begin("Space Crash", CRASH_SITE, 894, 1116, 50, 51);
-  Enes100.println("Connected...");
-  delay(500);
-  motor_setup();
 
-  myservo.attach(servo_pin);
-  myservo.write(0);
-  delay(1000); // Give time for the servo to reach position
-
-
-  // Initialize the arm to starting position (parallel to floor)
+void setServoAngle(int angle) {
+  // Convert angle to pulse width (1000-2000 microseconds)
+  int pulseWidth = map(angle, 0, 180, 1000, 2000);
   
-  ultra_setup();
-  // color_setup();
-  // set_angle_simple(0, 0.05);
-  // nav_obs(0.05, 0.08, 100);
-
-  // if (Enes100.getY() > 1) {
-  //   set_angle_simple(-(PI/2), 0.05);
-  // } else {
-  //   set_angle_simple(PI/2, 0.05);
-  // }
-  
-  // move_to_dist(13.5, 0);
-
-
+  // Generate the 50Hz PWM signal (20ms period)
+  digitalWrite(servo_pin, HIGH);
+  delayMicroseconds(pulseWidth);
+  digitalWrite(servo_pin, LOW);
+  delayMicroseconds(20000 - pulseWidth);
 }
 
-bool set_angle = false;
-// 20 ms or 50 Hz (On 1 MS, Off )
+// **** setup, runs once ****
+void setup() {
+  // delay(500);
+  // Serial.begin(9600);
+
+  // connecting to WiFi module
+  Enes100.begin("Space Crash", CRASH_SITE, 894, 1116, 51, 50);
+  Enes100.println("Connected...");
+  delay(500);
+
+  // motor and sensor setups
+  motor_setup();
+  ultra_setup();
+  color_setup();
+
+  // servo setup
+  // my_servo.attach(servo_pin);
+  // my_servo.write(0);
+  // delay(1000); // Give time for the servo to reach position
+
+
+  // *** Nav Objective I: move to within 150mm of crash site ***
+  // set_angle_simple(0, 0.05);
+  // if (Enes100.getY() > 1) {
+  //   set_angle_simple(-(PI/2) + 0.1, 0.05);
+  // } else {
+  //   set_angle_simple((PI/2) - 0.1, 0.05);
+  // }
+
+  // *** Nav Objective II: navigate through obstacles
+  // nav_y();
+  // nav_x();
+  set_angle_simple(0, 0.05);
+  nav_obs(0.05, 0.08, 150);
+  // nav_obs(0.05, 0.08, 150);
+
+  // *** Nav Objective III: navigate through limbo
+  // limbo();
+}
+
+
+// ****** 20 ms or 50 Hz (On 1 MS, Off ) ******
+
+// **** loop, continuously runs ****
 void loop() {
   // Enes100.println(ultra_get_distance());
   // move_forward(100);
   // Enes100.println(is_red());
   // delay(1000);
-  // measure_anomoly();
+  // shift_left(150);
+  // Enes100.println(ultra_get_distance());
+  // delay(1000);
+  // // measure_anomoly();
+
+  // *** SERVO ARM TEST ***
+  // for (int angle = 0; angle <= 180; angle += 10) {
+  //   for (int pulse = 0; pulse < 50; pulse++) {  // Hold position for ~1 second
+  //     setServoAngle(angle);
+  //   }
+  // }
+  // 
+  // my_servo.write(180);
+  // delay(1000);
+  // my_servo.write(90);
+  // delay(1000);
 
   // *** WIFI TESTt ***
   // delay(1000);
@@ -56,9 +93,4 @@ void loop() {
   // wifi_get_theta();
 
 
-  // *** arm test ***
-  myservo.write(180);
-  delay(1000);
-  myservo.write(90);
-  delay(1000);
 }

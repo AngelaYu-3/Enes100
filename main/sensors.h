@@ -3,7 +3,11 @@
 
 #include "Enes100.h"
 
-// ultrasonic
+/*
+ * Setup and functions for ultrasonic, color, and WiFi sensors.
+ */
+
+// **** ultrasonic ****
 #define trig_pin 25
 #define echo_pin 23
 
@@ -13,7 +17,9 @@ void ultra_setup() {
   Serial.begin(9600);
 }
 
-// getting distance in cm
+/* 
+ * getting distance in cm
+ */
 int ultra_get_distance() {
   long duration;
   long distance;
@@ -27,7 +33,7 @@ int ultra_get_distance() {
 
   duration = pulseIn(echo_pin, HIGH);
   // Serial.print("Duration: ");
-  //Serial.println(duration);
+  // Serial.println(duration);
   distance = (duration * 0.034) / 2;
   // Serial.print("Distance: ");
   // Serial.println(distance);
@@ -35,7 +41,7 @@ int ultra_get_distance() {
 }
 
 
-// color sensor
+// **** color sensor ****
 #define s0 4
 #define s1 49
 #define s2 3
@@ -98,8 +104,8 @@ bool is_red() { // grey: 60 150 115.   red:  38 180 180.       grey:       red: 
 }
 
 
-// wifi sensor
-
+// **** wifi sensor ****
+// x-coord is in m
 float wifi_get_X() {
   Enes100.print("X: ");
   Enes100.println(Enes100.getX());
@@ -107,6 +113,7 @@ float wifi_get_X() {
   return Enes100.getX();
 }
 
+// y-coord is in m
 float wifi_get_Y() {
   Enes100.print("Y: ");
   Enes100.println(Enes100.getY());
@@ -114,6 +121,7 @@ float wifi_get_Y() {
   return Enes100.getY();
 }
 
+// theta is in radians
 float wifi_get_theta() {
   Enes100.print("Theta: ");
   Enes100.println(Enes100.getTheta());
@@ -126,7 +134,7 @@ void wifi_transmit_length(float length) {
   Enes100.mission(LENGTH, length);
 }
 
-// heigght is in mm
+// height is in mm
 void wifi_transmit_height(float height) {
   Enes100.mission(HEIGHT, height);
 }

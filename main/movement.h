@@ -3,6 +3,11 @@
 
 #include "Enes100.h"
 #include "sensors.h"
+
+/*
+ * Setup and functions for motors.
+ */
+
 // looking at robot from back
 // motor A connections H-Bridge 1 (back-left)
 const int enA = 10;
@@ -139,30 +144,26 @@ void turn_right(int speed) {
 
 void shift_left(int speed) {
   control_motor_A(speed, true);
-  control_motor_B(speed, false);
-  control_motor_C(speed, true);
-  control_motor_D(speed, false);
+  control_motor_B(speed, false * 1.25);
+  control_motor_C(speed, true * 0.75);
+  control_motor_D(speed, false * 1.25);
 }
 
 void shift_right(int speed) {
   control_motor_A(speed, false);
-  control_motor_B(speed, true);
-  control_motor_C(speed, false);
-  control_motor_D(speed, true); 
+  control_motor_B(speed, true * 1.25);
+  control_motor_C(speed, false * 0.75);
+  control_motor_D(speed, true * 1.25); 
 }
 
-// uses ultrasonic sensor to move to a set distance (cm)
+// use ultrasonic sensor to move to a set distance (cm)
 void move_to_dist(double dist, double threshold, double speed) {
   int curr_dist = ultra_get_distance();
   int low_thresh = dist - threshold;
   int upper_thresh = dist + threshold;
 
   while (curr_dist > upper_thresh) {
-    // if (curr_dist < low_thresh) {
-    //   move_backward(100);
-    // } else if (curr_dist > upper_thresh) {
-      move_forward(speed);
-    // }
+    move_forward(speed);
     curr_dist = ultra_get_distance();
     Enes100.println("moving to distance");
   }
@@ -170,25 +171,28 @@ void move_to_dist(double dist, double threshold, double speed) {
   stop_motors();
 }
 
-// sets angle
-void set_angle_simple(double targetAngle, double thresh) {
-  double currentAngle = Enes100.getTheta();
-  double low_thresh = targetAngle - thresh;
-  double upper_thresh = targetAngle + thresh;
+/*
+ * sets OTV to defined target_angle
+ */
+void set_angle_simple(double target_angle, double thresh) {
+  double current_angle = Enes100.getTheta();
+  double low_thresh = target_angle - thresh;
+  double upper_thresh = target_angle + thresh;
 
-  while (currentAngle < low_thresh || currentAngle > upper_thresh) {
-    if (targetAngle - currentAngle < 0) {
+  while (current_angle < low_thresh || current_angle > upper_thresh) {
+    if (target_angle - current_angle < 0) {
       turn_right(60);
     } else {
       turn_left(60);
     } 
-    currentAngle = Enes100.getTheta();
+    current_angle = Enes100.getTheta();
   }
   
   Enes100.println("setting angle!");
   stop_motors();
 
 }
+
 // This function moves towards a specific X coordinate
 void nav_x(double pwm, double final_x, bool is_forward) {
     double x = Enes100.getX();
@@ -239,6 +243,8 @@ void nav_y(double pwm, double final_y) {
     // Stop moving, face default theta.
     stop_motors(); 
 }
+
+
 
 // // this function calculates the most efficient direction counter or clockwise for the
 // // OTV to move in to turn to a set angle
