@@ -41,7 +41,7 @@ void setup() {
 }
 
 bool set_angle = false;
-// 20 ms or 50 Hz
+// 20 ms or 50 Hz (On 1 MS, Off )
 void loop() {
   // Enes100.println(ultra_get_distance());
   // move_forward(100);
