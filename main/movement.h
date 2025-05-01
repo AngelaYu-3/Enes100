@@ -152,7 +152,7 @@ void shift_right(int speed) {
 }
 
 // uses ultrasonic sensor to move to a set distance (cm)
-void move_to_dist(double dist, double threshold) {
+void move_to_dist(double dist, double threshold, double speed) {
   int curr_dist = ultra_get_distance();
   int low_thresh = dist - threshold;
   int upper_thresh = dist + threshold;
@@ -161,7 +161,7 @@ void move_to_dist(double dist, double threshold) {
     // if (curr_dist < low_thresh) {
     //   move_backward(100);
     // } else if (curr_dist > upper_thresh) {
-      move_forward(100);
+      move_forward(speed);
     // }
     curr_dist = ultra_get_distance();
     Enes100.println("moving to distance");

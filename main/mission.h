@@ -4,11 +4,10 @@
 #include "sensors.h"
 #include "movement.h"
 #include "Enes100.h"
-#include <Servo.h>
 #include <Arduino.h>
 
-const int servo_pin = 11;
-Servo myServo;
+// const int servo_pin = 11;
+// Servo myServo;
 
 // Constants for measure_anomoly
 const double small_length = 135.0;  // The smaller possible length in mm
@@ -25,38 +24,28 @@ const double site_B_y = 0;
 
 // x = 0.3 y = 1
 
-void arm_setup() {
-  myServo.attach(servo_pin);
+// void arm_setup() {
+//   myServo.attach(servo_pin);
 
-  // Initialize the arm to starting position (parallel to floor)
-  myServo.write(0);
-  delay(1000); // Give time for the servo to reach position
-}
+//   // Initialize the arm to starting position (parallel to floor)
+//   myServo.write(0);
+//   delay(1000); // Give time for the servo to reach position
+// }
 
-void move_arm() {
-  int pos = 0;
-  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    myServo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myServo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-  // delay(1000);
-}
+// void move_arm() {
+//   int pos = 0;
+//   for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+//     // in steps of 1 degree
+//     myServo.write(pos);              // tell servo to go to position in variable 'pos'
+//     delay(15);                       // waits 15ms for the servo to reach the position
+//   }
+//   for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+//     myServo.write(pos);              // tell servo to go to position in variable 'pos'
+//     delay(15);                       // waits 15ms for the servo to reach the position
+//   }
+// }
 
-void initial_setup() {
-  if (Enes100.getY() < 1) {
-    set_angle_simple(PI/2, 0);
-  } else {
-    set_angle_simple(-(PI/2), 0);
-  }
-  
-  move_to_dist(13.5, 0);
-}
-
+/* measuring the length of the anomoly */
 void measure_anomoly() {
   double height = 0.024;
   double length1 = 0.018;
@@ -68,26 +57,33 @@ void measure_anomoly() {
 
   double dist = ultra_get_distance();
 
+  // shift right until the ultrasonic does not see anything
   while (dist < 20) {
     shift_right(80);
     dist = ultra_get_distance();
   }
-
   stop_motors();
+
+  // calculate the length of the flap
   final_x = Enes100.getX();
   length = 2 * abs(final_x - initial_x);
+  Enes100.print("final_x: ");
+  Enes100.println(final_x);
+  Enes100.print("initial_x: ");
+  Enes100.println(initial_x);
+  Enes100.println("length: ");
+  Enes100.println(length);
 
+  // determine which measured length is closest to length1 or length2
   if (abs(length1 - length) < abs(length2 - length)) {
     length = length1;
   } else {
     length = length2;
   }
 
-  Enes100.println("final x: ");
-  Enes100.println(final_x);
+  // transmit the measured height and length
   wifi_transmit_height(height);
   wifi_transmit_length(length);
-  delay(1000);
 }
 
 void find_anomoly() {
@@ -101,7 +97,7 @@ void find_anomoly() {
       nav_x(100, 1.3, true);
     }
     set_angle_simple(3, 0);
-    move_to_dist(13.5, 0);
+    move_to_dist(13.5, 0, 250);
   }
 }
 

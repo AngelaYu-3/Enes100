@@ -5,6 +5,17 @@
 #include "movement.h"
 #include "Enes100.h"
 
+// const double first_obs_x = 0;
+// const double second_obs_x = 0;
+// const double limbo_x = 0;
+// const double limbo_y = 0;
+
+// const double pos_1 = 0;
+// const double pos_2 = 0;
+// const double pos_3 = 0;
+
+// const double mid_y = 0;
+
 const double first_obs_x = 0;
 const double second_obs_x = 0;
 const double limbo_x = 0;
@@ -14,57 +25,170 @@ const double pos_1 = 0;
 const double pos_2 = 0;
 const double pos_3 = 0;
 
-const double mid_y = 0;
-
 /*
  * navigating past one set of obstacles
  */
-void nav_obs(int thresh) {
-  if (Enes100.getY() < (mid_y - thresh)) {
-    // shift left until you don't see something
-  } else if (Enes100.getY() > (mid_y + thresh)) {
-    // shift right until you don't see something
-  } else {
-    // shift right, if see something shift all the way left
+void nav_obs(double ultrasonicThresh, double coordinateThresh, int speed) {
+  double currentDistance = ultra_get_distance();
+  bool detectedObstacle = false;
+  bool strafeRight = false;
+
+  // move forward until OTV sees an obstacle
+  while (!detectedObstacle) {
+    currentDistance = ultra_get_distance();
+    move_forward(100);
+    if (currentDistance <= 15 - ultrasonicThresh) {
+      detectedObstacle = true;
+    }
   }
+
+  // decide on an initial strafing direction
+  if (Enes100.getY() > 1 + coordinateThresh) {
+    strafeRight = true;
+  } else {
+    strafeRight = false;
+  }
+
+  // while an obstacle is still seen either strafe right or left
+  while (currentDistance <= 8 - ultrasonicThresh) {
+    if (strafeRight) {
+      shift_right(speed);
+    } else {
+      shift_left(speed);
+    }
+    currentDistance = ultra_get_distance();
+    Enes100.println(currentDistance);
+
+    // if still see an obstacle even after strafing to one end, strafe to other end
+    // if (Enes100.getX() >= pos_1) {
+    //   strafeRight = true;
+    // } else if (Enes100.getX() <= pos_3) {
+    //   strafeRight = false;
+    // }
+  }
+
+  // strafe a little more to clear robot body
+  for (int i = 0; i < 2; i++) {
+    if (strafeRight) {
+      shift_right(speed);
+    } else {
+      shift_left(speed);
+    }
+    delay(1000);
+  }
+
+  move_forward(100);
+  // stop_motors();
 }
 
-/*
- * navigating past all obstacles and completing limbo
- */
-void nav_all_obs() {
-  // initial angle setup and move
-  set_angle_simple(0, 0);
-  move_to_dist(15, 0);
 
-  // need to go past both first and second obstacle
-  if (Enes100.getX() <= first_obs_x) {
-    nav_obs(0.8);
+//over here, i'm testing nav from point of mission, assuming mission is already completed. as such, 
+//i'm starting from roughly where the mission site is (can be at any angle, as it's resetting to zero)
+const int no_more_obstacles = 0;
+const int end_pos_x = 0;
+const double coordThresh = 0.05;
+const double thresh_ultrasonic = 0.5;
+void getMeHome() {
+  set_angle_simple(0, 0.05);
 
-    while (Enes100.getX() < second_obs_x) {
+  //will keep trying to see if obstacles exist until there are no more obstacles (we can get position by measuring)
+  while (Enes100.getX() < no_more_obstacles - coordThresh) {
+    int currentDistance = ultra_get_distance();
+    while (currentDistance <= 15 - thresh_ultrasonic) {
+      if (Enes100.getY() > 1 + coordThresh) {
+        shift_right(80);
+      } else {
+        shift_left(80);
+      }
+      currentDistance = ultra_get_distance();
+
+    }
+
+    for (int i = 0; i < 20; i++) {
       move_forward(100);
-      if (ultra_get_distance() <= 15) {
-        stop_motors();
-        nav_obs(0.8);
-      } 
-
-      if (Enes100.getX() > (second_obs_x + 0.5)) {
-        break;
+      delay(100);
+      if (ultra_get_distance() <= 15 - thresh_ultrasonic) {
+        break; // stop mid-move if obstacle appears
       }
     }
-  } // only need to go past second obstacle
-  else (Enes100.getX() <= second_obs_x) {
-    nav_obs(0.8);
+    set_angle_simple(0, 0.05);
+    // moves forward, going back to angle of 0 every 2 sec (delay can be adjusted)
+    Enes100.print("Current X: ");
+    Enes100.print(Enes100.getX());
+    Enes100.print("  Y: ");
+    Enes100.print(Enes100.getY());
+    }
+  
+
+
+
+  //executes after
+  while (Enes100.getX() > no_more_obstacles + coordThresh && Enes100.getX() < end_pos_x - coordThresh) {
+    if (Enes100.getY() < limbo_y - coordThresh) {
+      shift_left(100);
+    } else if (Enes100.getY() > limbo_y + coordThresh) {
+      shift_right(100);
+    }
+
+    //SENDING ITTTTTTTT!!!! (we can change it later if it doesn't work lol)
+    move_to_dist(15, 0.5, 250);
   }
 
-  // navigated through all obstacles and complete limbo
-  move_forward(100);
-  if (Enes100.getX() >= limbo_x) {
-    stop_motors();
-    nav_y(100, limbo_y);
-    move_to_dist(15, 0);
-  }
+  if (Enes100.getX() >= end_pos_x + coordThresh) {
+    Enes100.println("Raj has arrived...");
+    }
+
 }
+
+// /*
+//  * navigating past one set of obstacles
+//  */
+// void nav_obs(int thresh) {
+//   if (Enes100.getY() < (mid_y - thresh)) {
+//     // shift left until you don't see something
+//   } else if (Enes100.getY() > (mid_y + thresh)) {
+//     // shift right until you don't see something
+//   } else {
+//     // shift right, if see something shift all the way left
+//   }
+// }
+
+// /*
+//  * navigating past all obstacles and completing limbo
+//  */
+// void nav_all_obs() {
+//   // initial angle setup and move
+//   set_angle_simple(0, 0);
+//   move_to_dist(15, 0);
+
+//   // need to go past both first and second obstacle
+//   if (Enes100.getX() <= first_obs_x) {
+//     nav_obs(0.8);
+
+//     while (Enes100.getX() < second_obs_x) {
+//       move_forward(100);
+//       if (ultra_get_distance() <= 15) {
+//         stop_motors();
+//         nav_obs(0.8);
+//       } 
+
+//       if (Enes100.getX() > (second_obs_x + 0.5)) {
+//         break;
+//       }
+//     }
+//   } // only need to go past second obstacle
+//   else (Enes100.getX() <= second_obs_x) {
+//     nav_obs(0.8);
+//   }
+
+//   // navigated through all obstacles and complete limbo
+//   move_forward(100);
+//   if (Enes100.getX() >= limbo_x) {
+//     stop_motors();
+//     nav_y(100, limbo_y);
+//     move_to_dist(15, 0);
+//   }
+// }
 
 
 // const double first_obstacle_xcoor = 1.7;
