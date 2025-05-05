@@ -157,13 +157,25 @@ void shift_right(int speed) {
 }
 
 // use ultrasonic sensor to move to a set distance (cm)
-void move_to_dist(double dist, double threshold, double speed) {
+void move_to_dist_for(double dist, double threshold, double speed) {
   int curr_dist = ultra_get_distance();
-  int low_thresh = dist - threshold;
   int upper_thresh = dist + threshold;
 
   while (curr_dist > upper_thresh) {
     move_forward(speed);
+    curr_dist = ultra_get_distance();
+    Enes100.println("moving to distance");
+  }
+
+  stop_motors();
+}
+
+void move_to_dist_back(double dist, double threshold, double speed) {
+  int curr_dist = ultra_get_distance();
+  int low_thresh = dist - threshold;
+
+  while (curr_dist < low_thresh) {
+    move_backward(speed);
     curr_dist = ultra_get_distance();
     Enes100.println("moving to distance");
   }
@@ -181,9 +193,9 @@ void set_angle_simple(double target_angle, double thresh) {
 
   while (current_angle < low_thresh || current_angle > upper_thresh) {
     if (target_angle - current_angle < 0) {
-      turn_right(60);
+      turn_right(80);
     } else {
-      turn_left(60);
+      turn_left(80);
     } 
     current_angle = Enes100.getTheta();
   }
@@ -243,53 +255,6 @@ void nav_y(double pwm, double final_y) {
     // Stop moving, face default theta.
     stop_motors(); 
 }
-
-
-
-// // this function calculates the most efficient direction counter or clockwise for the
-// // OTV to move in to turn to a set angle
-// double calculateEfficientAngle(double currAngle, double targetAngle) {
-//     // currAngle = currAngle % 2*PI;
-//     if (currAngle < 0) currAngle += 2*PI;
-    
-//     // targetAngle = targetAngle % 2*PI;
-//     if (targetAngle < 0) targetAngle += 2*PI;
-    
-//     double cDistance = (targetAngle - currAngle + 2*PI);
-//     double ccDistance = (currAngle - targetAngle + 2*PI);
-    
-//     if (cDistance <= ccDistance) {
-//         return cDistance;
-//     } else {
-//         return -ccDistance;
-//     }
-// }
-
-// // this function makes the OTV turn to a certain angle 
-// void set_angle(double targetAngle, double threshold, double pwm) {
-//     double currAngle = Enes100.getTheta();
-//     double rotAmount = calculateEfficientAngle(currAngle, targetAngle);
-//     Enes100.println(Enes100.getTheta());
-    
-//     while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
-//         rotAmount = calculateEfficientAngle(currAngle, targetAngle);
-        
-//         if (rotAmount < 0) {
-//             turn_right(pwm); // Use actual pwm parameter, not hardcoded 100
-//         } else {
-//             turn_left(pwm);
-//         }
-//         delay(20);
-
-//         currAngle = Enes100.getTheta();
-
-//     }
-
-//     stop_motors();  
-
-//     // Enes100.print("Final angle: ");
-//     Enes100.println(Enes100.getTheta());     
-// }
 
 
 #endif

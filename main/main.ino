@@ -5,20 +5,20 @@
 #include "nav.h"
 #include <Servo.h>
 
-const int servo_pin = 11;
-Servo my_servo;
-int pos = 0;
+// const int servo_pin = 11;
+// Servo my_servo;
+// int pos = 0;
 
-void setServoAngle(int angle) {
-  // Convert angle to pulse width (1000-2000 microseconds)
-  int pulseWidth = map(angle, 0, 180, 1000, 2000);
+// void setServoAngle(int angle) {
+//   // Convert angle to pulse width (1000-2000 microseconds)
+//   int pulseWidth = map(angle, 0, 180, 1000, 2000);
   
-  // Generate the 50Hz PWM signal (20ms period)
-  digitalWrite(servo_pin, HIGH);
-  delayMicroseconds(pulseWidth);
-  digitalWrite(servo_pin, LOW);
-  delayMicroseconds(20000 - pulseWidth);
-}
+//   // Generate the 50Hz PWM signal (20ms period)
+//   digitalWrite(servo_pin, HIGH);
+//   delayMicroseconds(pulseWidth);
+//   digitalWrite(servo_pin, LOW);
+//   delayMicroseconds(20000 - pulseWidth);
+// }
 
 // **** setup, runs once ****
 void setup() {
@@ -30,7 +30,7 @@ void setup() {
   Enes100.println("Connected...");
   delay(500);
 
-  // motor and sensor setups
+  // // motor and sensor setups
   motor_setup();
   ultra_setup();
   color_setup();
@@ -42,22 +42,46 @@ void setup() {
 
 
   // *** Nav Objective I: move to within 150mm of crash site ***
+  // Enes100.println("**** Starting Nav Objective I ****");
   // set_angle_simple(0, 0.05);
   // if (Enes100.getY() > 1) {
   //   set_angle_simple(-(PI/2) + 0.1, 0.05);
   // } else {
   //   set_angle_simple((PI/2) - 0.1, 0.05);
   // }
+  // move_to_dist_for(13.5, 0, 100);
+  // Enes100.println("**** Finished Nav Objective I ****");
+  // Enes100.println();
+
+  // *** Mission Objective I: find anomoly
+  // Enes100.println("**** Starting Mission Objective I ****");
+  // find_anomoly();
+  // Enes100.println("**** Finished Mission Objective I ****");
+  // Enes100.println();
+
+  // *** Mission Objective II: measure anomolly
+  // Enes100.println("**** Starting Mission Objective II ****");
+  // measure_anomoly();
+  // Enes100.println("**** Finished Mission Objective II ****");
+  // Enes100.println();
 
   // *** Nav Objective II: navigate through obstacles
-  // nav_y();
-  // nav_x();
-  set_angle_simple(0, 0.05);
-  nav_obs(0.05, 0.08, 150);
+  // Enes100.println("**** Starting Nav Objective II ****");
+  // move_to_dist_back(30, 0.05, 100);
+  // set_angle_simple(0, 0.05);
+  // nav_y(100, 1);
+  // nav_x(100, 1);
+  // set_angle_simple(0, 0.05);
   // nav_obs(0.05, 0.08, 150);
+  // nav_obs(0.05, 0.08, 150);
+  // Enes100.println("**** Finished Nav Objective II ****");
+  // Enes100.println();
 
   // *** Nav Objective III: navigate through limbo
+  // Enes100.println("**** Starting Nav Objective III ****");
   // limbo();
+  // Enes100.println("**** Finished Nav Objective III ****");
+  // Enes100.println();
 }
 
 
@@ -65,6 +89,14 @@ void setup() {
 
 // **** loop, continuously runs ****
 void loop() {
+  // control_motor_C(100, true);
+  // move_forward(100);
+  // Enes100.println(ultra_get_distance());
+  // is_red();
+  // digitalWrite(13, HIGH);
+  // delay(1000);
+  // digitalWrite(13, LOW);
+  // delay(1000);
   // Enes100.println(ultra_get_distance());
   // move_forward(100);
   // Enes100.println(is_red());

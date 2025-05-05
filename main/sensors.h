@@ -8,13 +8,13 @@
  */
 
 // **** ultrasonic ****
-#define trig_pin 25
-#define echo_pin 23
+#define trig_pin 36
+#define echo_pin 34
 
 void ultra_setup() {
   pinMode(trig_pin, OUTPUT);
   pinMode(echo_pin, INPUT);
-  Serial.begin(9600);
+  // Serial.begin(9600);
 }
 
 /* 
@@ -94,10 +94,10 @@ bool is_red() { // grey: 60 150 115.   red:  38 180 180.       grey:       red: 
   get_colors();
   Serial.print("isRed: ");
   if (blue > 450 && green > 480) {
-        Serial.println("true");
+        Enes100.println("true");
         return true;
   } else {
-    Serial.println("false");
+    Enes100.println("false");
     return false;
   }
   delay(1000);

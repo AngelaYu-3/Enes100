@@ -14,62 +14,32 @@
  */
 
 
-// const int servo_pin = 11;
-// Servo myServo;
-
-// constants for measure_anomoly
-const double small_length = 135.0;  // The smaller possible length in mm
-const double large_length = 180.0;  // The larger possible length in mm
-const double half_small_length = 67.5;  // Half of the smaller length
-const double height = 270.0; 
-const double centerOfSite;
-
-// x = 0.3 y = 1
-
-// void arm_setup() {
-//   myServo.attach(servo_pin);
-
-//   // Initialize the arm to starting position (parallel to floor)
-//   myServo.write(0);
-//   delay(1000); // Give time for the servo to reach position
-// }
-
-// void move_arm() {
-//   int pos = 0;
-//   for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
-//     // in steps of 1 degree
-//     myServo.write(pos);              // tell servo to go to position in variable 'pos'
-//     delay(15);                       // waits 15ms for the servo to reach the position
-//   }
-//   for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-//     myServo.write(pos);              // tell servo to go to position in variable 'pos'
-//     delay(15);                       // waits 15ms for the servo to reach the position
-//   }
-// }
-
 /* 
  * measuring the length of the anomoly
  */
 void measure_anomoly() {
-  double height = 0.024;
-  double length1 = 0.018;
-  double length2 = 0.0135;
+  // all measurements are in mm
+  double height = 270;
+  double length1 = 180;
+  double length2 = 135;
 
-  double initial_x = Enes100.getX();
+  double initial_x = Enes100.getX() * 1000;
   double final_x = 0;
   double length;
 
   double dist = ultra_get_distance();
 
+  move_to_dist_back(30, 0.05, 100);
+
   // shift right until the ultrasonic does not see anything
-  while (dist < 20) {
+  while (dist < 35) {
     shift_right(80);
     dist = ultra_get_distance();
   }
   stop_motors();
 
   // calculate the length of the flap
-  final_x = Enes100.getX();
+  final_x = Enes100.getX() * 1000;
   length = 2 * abs(final_x - initial_x);
   Enes100.print("final_x: ");
   Enes100.println(final_x);
@@ -86,8 +56,15 @@ void measure_anomoly() {
   }
 
   // transmit the measured height and length
-  wifi_transmit_height(height);
-  wifi_transmit_length(length);
+  Enes100.println("Anomoly Measurements (mm)");
+  Enes100.print("Height: ");
+  Enes100.println(height);
+  Enes100.print("Length: ");
+  Enes100.println(length);
+  Enes100.println();
+
+  // wifi_transmit_height(height);
+  // wifi_transmit_length(length);
 }
 
 /* 
@@ -96,84 +73,26 @@ void measure_anomoly() {
 void find_anomoly() {
   if (is_red()) {
     stop_motors();
+    Enes100.println("first side is red!");
+    Enes100.println();
   } else {
-    nav_y(100, 1);
+    // move to other side of crash site
+    move_to_dist_back(30, 0.05, 100);
+    set_angle_simple(0, 0.05);
+    nav_x(100, 0.8, true);
+    set_angle_simple(3.1, 0.05);
+
+    // strafe left or right depending on mission site
     if (Enes100.getX() < 1) {
-      nav_x(100, 0.1, true);
+      nav_y(100, 0.3);
     } else {
-      nav_x(100, 1.3, true);
+      nav_y(100, 1.3);
     }
-    set_angle_simple(3, 0);
-    move_to_dist(13.5, 0, 250);
+
+    move_to_dist_for(13.5, 0, 100);
+    Enes100.println("second side is red!");
+    Enes100.println();
   }
 }
-
-// bool find_anomoly() {
-//   if (is_red()) {
-//     return true;
-//   } else if (check_site_A()){
-//     while (!is_red()) {
-//       // back out
-//       navigatingCoorY(100, 1.30);
-//       // rotate
-//       // move forward
-//       // check is red
-//       // if red stop return true
-//       // else continue in while loop
-//     }
-//   } else {
-//     while (!is_red()) {
-//       navigatingCoorY(100, 0.60);
-//     }
-//   }
-// }
-
-// // void measure_anomoly(double pwm) {
-// //   // move to x = center of block
-// //   navigatingCoorX(pwm, centerOfSite);
-// //   stop_motors();
-// //   delay(100);
-
-// //   // strafe left and continuously update the variable until the color sensor.
-// //   double length = small_length;   // Assume length is smaller length first.
-// //   double strafeDistance = 0.0;
-//   double startY = wifi_get_Y();
-//   bool detectedRed = false;
-//   bool measurementComplete = false;
-
-//   shift_left(pwm);
-
-//   while (!measurementComplete) {
-//     // Get current position to calculate distance moved
-//     double currentY = wifi_get_Y();
-//     strafeDistance = abs(currentY - startY) * 1000.0;  // Convert to mm
-    
-//     // Check if the color sensor detects red
-//     if (is_red()) {
-//       detectedRed = true;
-//     }
-
-//     // If we were detecting red but no longer are, assume its smaller length, don't change the length value.
-//     if (detectedRed && !is_red()) {
-//       measurementComplete = true;
-//     }
-    
-//     // If we've strafed more than half of the small length and still detecting red, assume it's the larger length, change the length value;
-//     if (strafeDistance > half_small_length && is_red()) {
-//       length = large_length;
-//       measurementComplete = true;
-//     }
-//   }
-    
-//   delay(10);  
-    
-//   stop_motors();
-//   wifi_transmit_length(length);
-//   wifi_transmit_height(height);
-// }
-
-// void fix_anomoly() {
-
-// }
 
 #endif
