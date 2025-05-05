@@ -117,14 +117,14 @@ void stop_motors() {
 void move_forward(int speed) {
   control_motor_A(speed, true);
   control_motor_B(speed, true);
-  control_motor_C(speed, true);
+  control_motor_C(speed * 1.25, true);
   control_motor_D(speed, true);
 }
 
 void move_backward(int speed) {
   control_motor_A(speed, false);
   control_motor_B(speed, false);
-  control_motor_C(speed, false);
+  control_motor_C(speed * 1.25, false);
   control_motor_D(speed, false);
 }
 
@@ -193,9 +193,9 @@ void set_angle_simple(double target_angle, double thresh) {
 
   while (current_angle < low_thresh || current_angle > upper_thresh) {
     if (target_angle - current_angle < 0) {
-      turn_right(80);
+      turn_right(60);
     } else {
-      turn_left(80);
+      turn_left(60);
     } 
     current_angle = Enes100.getTheta();
   }

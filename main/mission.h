@@ -61,7 +61,7 @@ void measure_anomoly() {
   Enes100.println(height);
   Enes100.print("Length: ");
   Enes100.println(length);
-  Enes100.println();
+  // Enes100.println();
 
   // wifi_transmit_height(height);
   // wifi_transmit_length(length);
@@ -74,7 +74,7 @@ void find_anomoly() {
   if (is_red()) {
     stop_motors();
     Enes100.println("first side is red!");
-    Enes100.println();
+    // Enes100.println();
   } else {
     // move to other side of crash site
     move_to_dist_back(30, 0.05, 100);
@@ -91,7 +91,7 @@ void find_anomoly() {
 
     move_to_dist_for(13.5, 0, 100);
     Enes100.println("second side is red!");
-    Enes100.println();
+    // Enes100.println();
   }
 }
 
