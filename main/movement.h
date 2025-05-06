@@ -177,7 +177,7 @@ void move_to_dist_back(double dist, double threshold, double speed) {
   while (curr_dist < low_thresh) {
     move_backward(speed);
     curr_dist = ultra_get_distance();
-    Enes100.println("moving to distance");
+    // Enes100.println("moving to distance");
   }
 
   stop_motors();

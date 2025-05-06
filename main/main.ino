@@ -48,30 +48,38 @@ void setup() {
   } else {
     set_angle_simple((PI/2) - 0.2, 0.05);
   }
-  move_to_dist_for(12, 0, 100);
+  move_to_dist_for(13.5, 0, 100);
   Enes100.println("**** Finished Nav Objective I ****");
+  delay(1000);
 
   // *** Mission Objective I: find anomoly
-  // Enes100.println("**** Starting Mission Objective I ****");
+  Enes100.println("**** Starting Mission Objective I ****");
+  Enes100.print("Color: ");
+  Enes100.println(is_red());
   // find_anomoly();
-  // Enes100.println("**** Finished Mission Objective I ****");
-  // Enes100.println();
+  Enes100.println("**** Finished Mission Objective I ****");
 
   // *** Mission Objective II: measure anomolly
   // Enes100.println("**** Starting Mission Objective II ****");
   // measure_anomoly();
   // Enes100.println("**** Finished Mission Objective II ****");
-  // Enes100.println();
 
   // *** Nav Objective II: navigate through obstacles
   Enes100.println("**** Starting Nav Objective II ****");
+  double curr_x;
   move_to_dist_back(30, 0.05, 100);
   set_angle_simple(0, 0.05);
   nav_y(100, 1);
   nav_x(100, 0.5, true);
-  nav_obs(0.05, 0.08, 100);
-  nav_obs(0.05, 0.08, 100);
+
+  curr_x = Enes100.getX();
+  while (curr_x <= 2.4) {
+    nav_obs(0.05, 0.05, 100);
+    curr_x = Enes100.getX();
+  }
+
   Enes100.println("**** Finished Nav Objective II ****");
+  delay(1000);
 
   // // *** Nav Objective III: navigate through limbo
   Enes100.println("**** Starting Nav Objective III ****");

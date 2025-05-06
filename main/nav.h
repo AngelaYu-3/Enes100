@@ -28,7 +28,7 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
   while (!detected_obstacle) {
     Enes100.println("obstacle not detected");
     move_forward(100);
-    if (curr_distance <= 20 - ultrasonic_thresh) {
+    if (curr_distance <= 15 - ultrasonic_thresh) {
       detected_obstacle = true;
       Enes100.println("obstacle detected");
       stop_motors();
@@ -37,16 +37,13 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
   }
 
   // decide on an initial strafing direction
-  if (Enes100.getY() > 1 + coordinate_thresh) {
-    strafe_right = true;
-  } else {
-    strafe_right = false;
-  }
+  strafe_right = true;
 
   curr_y = Enes100.getY();
-
+  set_angle_simple(0, 0.05);
+  curr_distance = ultra_get_distance();
   // while an obstacle is still seen either strafe right or left
-  while (curr_distance < 20 + coordinate_thresh) {
+  while (curr_distance < 15 + coordinate_thresh) {
     // break out of while loop if nothing is seen
     if (curr_distance > 30) {
       break;
@@ -54,33 +51,30 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
 
     // decide which way to go depending on obstacle configuration
     curr_y = Enes100.getY();
-    if (curr_distance < 20 + coordinate_thresh) {
-      if (curr_y >= 1.2) {
-        // obstacle left and middle
-        Enes100.println("in first if statement");
-        strafe_right = true;
-      } else if (curr_y <= 0.4) {
+    if (curr_distance < 15 + coordinate_thresh) {
+      if (curr_y <= 0.3) {
         // obstacle right and middle
         strafe_right = false;
-        Enes100.println("in second if statement");
+        stop_motors();
+        set_angle_simple(0, 0.05);
       }
     }
 
     // checking and fixing alignment + angle issues
-    curr_distance = ultra_get_distance();
-    if (curr_distance < 10) {
-      stop_motors();
-      Enes100.println("FIXING ALIGNMENT");
-      move_to_dist_back(20, coordinate_thresh, 100);
-      Enes100.println("DONE FIXING ALIGNMENT");
-    }
-    curr_theta = Enes100.getTheta();
-    if (curr_theta < -0.05 || curr_theta > 0.05) {
-      stop_motors();
-      Enes100.println("FIXING ANGLE");
-      set_angle_simple(0, 0.05);
-      Enes100.println("DONE FIXING ANGLE");
-    }
+    // curr_distance = ultra_get_distance();
+    // if (curr_distance < 6) {
+    //   stop_motors();
+    //   Enes100.println("FIXING ALIGNMENT");
+    //   move_to_dist_back(20, coordinate_thresh, 100);
+    //   Enes100.println("DONE FIXING ALIGNMENT");
+    // }
+    // curr_theta = Enes100.getTheta();
+    // if (curr_theta < -0.05 || curr_theta > 0.05) {
+    //   stop_motors();
+    //   Enes100.println("FIXING ANGLE");
+    //   set_angle_simple(0, 0.05);
+    //   Enes100.println("DONE FIXING ANGLE");
+    // }
 
     // strafe in correct direction
     if (strafe_right) {
@@ -89,11 +83,11 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
       shift_left(speed);
     }
 
-    Enes100.println("in while loop!");
+    // Enes100.println("in while loop!");
 
     // update sensor values
     curr_distance = ultra_get_distance();
-    Enes100.println(curr_distance);
+    // Enes100.println(curr_distance);
     curr_y = Enes100.getY();
     curr_theta = Enes100.getTheta();
   }
@@ -118,8 +112,8 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
  */
 void limbo() {
   set_angle_simple(0, 0.05);
-  nav_x(150, 2.8, true);
-  nav_y(150, 1.6);
+  nav_x(150, 2.6, true);
+  nav_y(150, 1.4);
   move_to_dist_for(13.5, 0.05, 200);
 }
 
