@@ -48,7 +48,7 @@ void setup() {
   } else {
     set_angle_simple((PI/2) - 0.2, 0.05);
   }
-  move_to_dist_for(13.5, 0, 100);
+  move_to_dist_for(12, 0, 100);
   Enes100.println("**** Finished Nav Objective I ****");
 
   // *** Mission Objective I: find anomoly
@@ -65,16 +65,15 @@ void setup() {
 
   // *** Nav Objective II: navigate through obstacles
   Enes100.println("**** Starting Nav Objective II ****");
-  // move_to_dist_back(30, 0.05, 100);
+  move_to_dist_back(30, 0.05, 100);
   set_angle_simple(0, 0.05);
   nav_y(100, 1);
   nav_x(100, 0.5, true);
-  set_angle_simple(0, 0.05);
   nav_obs(0.05, 0.08, 150);
   nav_obs(0.05, 0.08, 150);
   Enes100.println("**** Finished Nav Objective II ****");
 
-  // *** Nav Objective III: navigate through limbo
+  // // *** Nav Objective III: navigate through limbo
   Enes100.println("**** Starting Nav Objective III ****");
   limbo();
   Enes100.println("**** Finished Nav Objective III ****");

@@ -117,14 +117,14 @@ void stop_motors() {
 void move_forward(int speed) {
   control_motor_A(speed, true);
   control_motor_B(speed, true);
-  control_motor_C(speed * 1.25, true);
+  control_motor_C(speed, true);
   control_motor_D(speed, true);
 }
 
 void move_backward(int speed) {
   control_motor_A(speed, false);
   control_motor_B(speed, false);
-  control_motor_C(speed * 1.25, false);
+  control_motor_C(speed, false);
   control_motor_D(speed, false);
 }
 
