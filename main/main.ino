@@ -69,8 +69,8 @@ void setup() {
   set_angle_simple(0, 0.05);
   nav_y(100, 1);
   nav_x(100, 0.5, true);
-  nav_obs(0.05, 0.08, 150);
-  nav_obs(0.05, 0.08, 150);
+  nav_obs(0.05, 0.08, 100);
+  nav_obs(0.05, 0.08, 100);
   Enes100.println("**** Finished Nav Objective II ****");
 
   // // *** Nav Objective III: navigate through limbo
