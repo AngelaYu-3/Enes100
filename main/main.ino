@@ -22,6 +22,7 @@
 
 double curr_y;
 bool is_flap_red = false;
+bool is_site_A = false;
 // **** setup, runs once ****
 void setup() {
   // delay(500);
@@ -48,15 +49,16 @@ void setup() {
     set_angle_simple(-(PI/2), 0.05);
   } else {
     set_angle_simple((PI/2), 0.05);
+    is_site_A = true;
   }
 
   move_to_dist_for(13.5, 0, 60);
   curr_y = Enes100.getY();
-  if (curr_y > 1 || curr_y == -1) {
+  if (curr_y > 1) {
     is_flap_red = true;
-    move_to_dist_for(13.5, 0, 60);
   }
   stop_motors();
+  // set_angle_simple(-(PI/2), 0.05);
   
   Enes100.println("**** Finished Nav Objective I ****");
   delay(200);
@@ -75,7 +77,12 @@ void setup() {
 
   // // *** Mission Objective II: measure anomolly
   Enes100.println("**** Starting Mission Objective II ****");
-  measure_anomoly();
+  if (is_site_A) {
+    set_angle_simple(PI/2, 0.05);
+  } else {
+    set_angle_simple(-(PI/2), 0.05);
+  }
+  measure_anomoly(is_flap_red);
   delay(200);
   Enes100.println("**** Finished Mission Objective II ****");
 

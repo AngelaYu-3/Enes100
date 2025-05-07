@@ -17,7 +17,7 @@
 /* 
  * measuring the length of the anomoly
  */
-void measure_anomoly() {
+void measure_anomoly(bool is_red) {
   // all measurements are in mm
   double height = 270;
   double length1 = 180;
@@ -29,8 +29,10 @@ void measure_anomoly() {
 
   double dist = ultra_get_distance();
 
-  move_to_dist_back(30, 0.05, 100);
-
+  if (is_red) {
+    move_to_dist_back(30, 0.05, 100);
+  }
+  
   // shift right until the ultrasonic does not see anything
   while (dist < 35) {
     shift_right(80);
@@ -55,6 +57,13 @@ void measure_anomoly() {
     length = length2;
   }
 
+  if (!is_red) {
+    if (length == length1) {
+      length = length2;
+    } else {
+      length = length1;
+    }
+  }
   // transmit the measured height and length
   Enes100.println("Anomoly Measurements (mm)");
   Enes100.print("Height: ");
