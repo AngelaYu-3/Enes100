@@ -5,109 +5,128 @@
 #include "movement.h"
 #include "Enes100.h"
 
-// this function calculates the most efficient direction counter or clockwise for the
-// OTV to move in to turn to a set angle
-double calculateEfficientAngle(int currAngle, int targetAngle) {
-    // currAngle = currAngle % 2*PI;
-    if (currAngle < 0) currAngle += 2*PI;
-    
-    // targetAngle = targetAngle % 2*PI;
-    if (targetAngle < 0) targetAngle += 2*PI;
-    
-    double cDistance = (targetAngle - currAngle + 2*PI);
-    double ccDistance = (currAngle - targetAngle + 2*PI);
-    
-    if (cDistance <= ccDistance) {
-        return cDistance;
+/*
+ * Functions for navigation objective: 
+ *    Objective II: navigating through obstacles
+ *    Objective III: navigating through limbo
+ *
+ * Note: navigation Objective I is in main.ino setup()
+ */
+
+/*
+ * navigating past one set of obstacles
+ */
+void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
+  double curr_distance = ultra_get_distance();
+  double curr_theta = Enes100.getTheta();
+  double curr_y = Enes100.getY();
+  double curr_x = Enes100.getX();
+  bool detected_obstacle = false;
+  bool strafe_right = false;
+
+  // move forward until OTV sees an obstacle
+  while (!detected_obstacle) {
+    // Enes100.println("obstacle not detected");
+    if (curr_x > 2.5) {
+      return;
+    }
+
+    move_forward(100);
+
+    if (curr_distance <= 15 - ultrasonic_thresh) {
+      detected_obstacle = true;
+      Enes100.println("obstacle detected");
+      stop_motors();
+    }
+    curr_distance = ultra_get_distance();
+    curr_x = Enes100.getX();
+  }
+
+  // decide on an initial strafing direction
+  strafe_right = true;
+
+  curr_y = Enes100.getY();
+  set_angle_simple(0, 0.08);
+  curr_distance = ultra_get_distance();
+  // while an obstacle is still seen either strafe right or left
+  while (curr_distance < 15 + coordinate_thresh) {
+    // break out of while loop if nothing is seen
+    if (curr_distance > 30) {
+      Enes100.println("nothing seen!");
+      break;
+    }
+
+    // decide which way to go depending on obstacle configuration
+    curr_y = Enes100.getY();
+    if (curr_distance < 15 + coordinate_thresh) {
+      if (curr_y <= 0.4) {
+        // obstacle right and middle
+        strafe_right = false;
+        // stop_motors();
+        // set_angle_simple(0, 0.05);
+      }
+
+      if (curr_y >= 1.3) {
+        strafe_right = true;
+        // stop_motors();
+        // set_angle_simple(0, 0.05);
+      }
+    }
+
+    // checking and fixing alignment + angle issues
+    // curr_distance = ultra_get_distance();
+    // if (curr_distance < 6) {
+    //   stop_motors();
+    //   Enes100.println("FIXING ALIGNMENT");
+    //   move_to_dist_back(20, coordinate_thresh, 100);
+    //   Enes100.println("DONE FIXING ALIGNMENT");
+    // }
+    // curr_theta = Enes100.getTheta();
+    // if (curr_theta < -0.05 || curr_theta > 0.05) {
+    //   stop_motors();
+    //   Enes100.println("FIXING ANGLE");
+    //   set_angle_simple(0, 0.05);
+    //   Enes100.println("DONE FIXING ANGLE");
+    // }
+
+    // strafe in correct direction
+    if (strafe_right) {
+      shift_right(speed);
     } else {
-        return -ccDistance;
-    }
-}
-
-// this function makes the OTV turn to a certain angle 
-void setAngle(double targetAngle, double threshold, double pwm) {
-    double currAngle = Enes100.getTheta();
-    double rotAmount = calculateEfficientAngle(currAngle, targetAngle);
-    Enes100.println(Enes100.getTheta());
-    
-    while (!(currAngle < (targetAngle + threshold) && currAngle > (targetAngle - threshold))) {
-        //Enes100.print(currAngle - targetAngle);
-        if (currAngle - targetAngle > 0) {
-            // Enes100.print("print statement 1: ");
-            turn_right(100);
-        } else if (currAngle - targetAngle < 0) {
-            // Enes100.println("print statement 2");
-            turn_left(100);
-        } 
-        currAngle = Enes100.getTheta();
-    }
-    stop_motors();  
-    
-    // Enes100.print("Final angle: ");
-    Enes100.println(Enes100.getTheta());    
-}
-
-// This function moves either forward or backward until there is a obstacle.
-void navigation(double pwm, double distFromObst) {
-    double ultrasonicReading = ultra_get_distance();
-        
-        // While there is no obstacles, tank moves forward
-        while (ultrasonicReading == -1 || ultrasonicReading > distFromObst) {
-            move_forward(pwm);
-            ultrasonicReading = ultra_get_distance();
-        } 
-        
-        // There is obstacles, so stop moving.
-        stop_motors();  
-
-}
-
-// This function moves towards a specific X coordinate
-void navigatingCoorX(double pwm, double finalX) {
-    double X = wifi_get_X();
-    double threshold = 0.08;
-
-    // Make sure OTV is facing default theta.
-    setAngle(0, 0.09, 50);
-       
-    // If we need to move backward, negate pwm so wheel move backward.
-    if (X > finalX) {
-        pwm = -pwm;
-    } 
-
-    // If X is not near coor.
-    while (!(X < (finalX + threshold) && X > (finalX - threshold))) {
-        move_forward(pwm);
-        
-        X = wifi_get_X();
+      shift_left(speed);
     }
 
-    // Stop moving.
-    stop_motors();
+    // Enes100.println("in while loop!");
+
+    // update sensor values
+    // re_oriente();
+    curr_distance = ultra_get_distance();
+    curr_y = Enes100.getY();
+    curr_theta = Enes100.getTheta();
+  }
+
+  Enes100.println("OUT OF WHILE LOOP");
+
+  // strafe a little more to clear robot body
+  for (int i = 0; i < 2.5; i++) {
+    if (strafe_right) {
+      shift_right(speed);
+    } else {
+      shift_left(speed);
+    }
+    delay(500);
+  }
+  Enes100.println("FINIISHED NAVIGATING OBSTACLE");
 }
 
-// This function moves towards a specific Y coordinate
-void navigatingCoorY(double pwm, double finalY) {
-    double Y = wifi_get_Y();
-    double threshold = 0.09;
-    
-    // Make sure OTV is facing default theta.
-    setAngle(0, 0.09, 50);
-
-    // If Y is not in targetCoorY. 
-    while (!(Y < (finalY + threshold) && Y > (finalY - threshold))) {
-        // Depending on if robot is below or above, shift left or right from default theta.
-        if (Y < finalY) {
-            shift_left(pwm);
-        } else {
-            shift_right(pwm);
-        }
-        
-        Y = wifi_get_Y();
-    }
-
-    // Stop moving, face default theta.
-    stop_motors(); 
+/*
+ * completing limbo
+ */
+void limbo() {
+  set_angle_simple(0, 0.05);
+  nav_x(150, 2.6, true);
+  nav_y(150, 1.4);
+  move_to_dist_for(13.5, 0.05, 100);
 }
 
 #endif

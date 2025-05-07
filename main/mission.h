@@ -2,79 +2,96 @@
 #define MISSION_H
 
 #include "sensors.h"
-#include <VarSpeedServo.h>
+#include "movement.h"
+#include "Enes100.h"
 #include <Arduino.h>
-#include "nav.h"
 
-const int servo_pin = 11;
-VarSpeedServo myServo;
+/*
+ * Functions for completing mission objectives: 
+ *    Objective I: finding anomoly
+ *    Objective II: fixing anomoly
+ *    Objective III: measuring height and length of anomoly
+ */
 
-void arm_setup() {
-  myServo.attach(servo_pin);
-}
 
-void move_arm() {
-  myServo.slowmove(180 - 50, 50);
-  // delay(1000);
-}
-
-bool check_site_A() {
-  setAngle(90, 5, 100);
-  navigatingCoorX(100, 0.55);
-  navigatingCoorY(100, 1.40);
-
-  if (ultra_get_distance() != 0) {
-    return true;
-  }
-
-  return false;
-}
-
-void check_site_B() {
-  setAngle(-90, 5, 100);
-  navigatingCoorX(100, 0.55);
-  navigatingCoorY(100, 0.50);
-}
-
-bool find_anomoly() {
-  if (is_red()) {
-    return true;
-  } else if (check_site_A()){
-    while (!is_red()) {
-      // back out
-      navigatingCoorY(100, 1.30);
-      // rotate
-      // move forward
-      // check is red
-      // if red stop return true
-      // else continue in while loop
-    }
-  } else {
-    while (!is_red()) {
-      navigatingCoorY(100, 0.60);
-    }
-  }
-}
-
+/* 
+ * measuring the length of the anomoly
+ */
 void measure_anomoly() {
-  wifi_transmit_height(270);
-}
+  // all measurements are in mm
+  double height = 270;
+  double length1 = 180;
+  double length2 = 135;
 
-void fix_anomoly() {
+  double initial_x = Enes100.getX() * 1000;
+  double final_x = 0;
+  double length;
 
-}
+  double dist = ultra_get_distance();
 
-void mission() {
-  // check site A
-  if (check_site_A()) {
-    find_anomoly();
-    measure_anomoly();
-    fix_anomoly();
+  move_to_dist_back(30, 0.05, 100);
+
+  // shift right until the ultrasonic does not see anything
+  while (dist < 35) {
+    shift_right(80);
+    dist = ultra_get_distance();
+  }
+  stop_motors();
+
+  // calculate the length of the flap
+  final_x = Enes100.getX() * 1000;
+  length = abs(final_x - initial_x);
+  Enes100.print("final_x: ");
+  Enes100.println(final_x);
+  Enes100.print("initial_x: ");
+  Enes100.println(initial_x);
+  Enes100.println("length: ");
+  Enes100.println(length);
+
+  // determine which measured length is closest to length1 or length2
+  if (abs(length1 - length) < abs(length2 - length)) {
+    length = length1;
   } else {
-    check_site_B();
-    find_anomoly();
-    measure_anomoly();
-    fix_anomoly();
+    length = length2;
+  }
+
+  // transmit the measured height and length
+  Enes100.println("Anomoly Measurements (mm)");
+  Enes100.print("Height: ");
+  Enes100.println(height);
+  Enes100.print("Length: ");
+  Enes100.println(length);
+  // Enes100.println();
+
+  // wifi_transmit_height(height);
+  // wifi_transmit_length(length);
+}
+
+/* 
+ * finding the anomoly
+ */
+void find_anomoly() {
+  if (is_red()) {
+    stop_motors();
+    Enes100.println("first side is red!");
+    // Enes100.println();
+  } else {
+    // move to other side of crash site
+    move_to_dist_back(10, 0.05, 100);
+    set_angle_simple(0, 0.05);
+    nav_x(100, 0.8, true);
+    set_angle_simple(3.1, 0.05);
+
+    // strafe left or right depending on mission site
+    if (Enes100.getX() < 1) {
+      nav_y(100, 0.3);
+    } else {
+      nav_y(100, 1.3);
+    }
+
+    move_to_dist_for(13.5, 0, 100);
+    Enes100.println("second side is red!");
+    // Enes100.println();
   }
 }
 
