@@ -145,42 +145,15 @@ void turn_right(int speed) {
 void shift_left(int speed) {
   control_motor_A(speed, true);
   control_motor_B(speed, false * 1.25);
-  control_motor_C(speed, true * 0.75);
+  control_motor_C(speed, true);
   control_motor_D(speed, false * 1.25);
 }
 
 void shift_right(int speed) {
   control_motor_A(speed, false);
   control_motor_B(speed, true * 1.25);
-  control_motor_C(speed, false * 0.75);
+  control_motor_C(speed, false);
   control_motor_D(speed, true * 1.25); 
-}
-
-// use ultrasonic sensor to move to a set distance (cm)
-void move_to_dist_for(double dist, double threshold, double speed) {
-  int curr_dist = ultra_get_distance();
-  int upper_thresh = dist + threshold;
-
-  while (curr_dist > upper_thresh) {
-    move_forward(speed);
-    curr_dist = ultra_get_distance();
-    Enes100.println("moving to distance");
-  }
-
-  stop_motors();
-}
-
-void move_to_dist_back(double dist, double threshold, double speed) {
-  int curr_dist = ultra_get_distance();
-  int low_thresh = dist - threshold;
-
-  while (curr_dist < low_thresh) {
-    move_backward(speed);
-    curr_dist = ultra_get_distance();
-    // Enes100.println("moving to distance");
-  }
-
-  stop_motors();
 }
 
 /*
@@ -200,9 +173,19 @@ void set_angle_simple(double target_angle, double thresh) {
     current_angle = Enes100.getTheta();
   }
   
-  Enes100.println("setting angle!");
+  // Enes100.println("setting angle!");
   stop_motors();
 
+}
+
+void move_forward_angle(int speed, double angle) {
+  control_motor_A(speed, true);
+  control_motor_B(speed, true);
+  control_motor_C(speed, true);
+  control_motor_D(speed, true);
+  delay(2000);
+  stop_motors();
+  set_angle_simple(angle, 0);
 }
 
 // This function moves towards a specific X coordinate
@@ -254,6 +237,83 @@ void nav_y(double pwm, double final_y) {
 
     // Stop moving, face default theta.
     stop_motors(); 
+}
+
+/*
+ * reoriente robot if it is stuck (in one coord pos for a long period of time)
+ */
+void re_oriente() {
+  double curr_x = Enes100.getX();
+  double curr_y = Enes100.getY();
+  double final_x;
+  double final_y;
+  bool is_stuck = false;
+
+  for (int i = 0; i < 3; i++) {
+    delay(1000);
+  }
+
+  final_x = Enes100.getX();
+  final_y = Enes100.getY();
+  if ((final_x < curr_x + 0.03 && final_x > curr_x - 0.03)
+      && (final_y < curr_y + 0.03 && final_y > curr_y + 0.03)) {
+        is_stuck = true;
+  }
+
+  if (is_stuck) {
+    for (int i = 0; i < 1; i++) {
+      move_backward(100);
+      delay(1000);
+    }
+
+    set_angle_simple(0, 0.05);
+  }
+}
+
+// use ultrasonic sensor to move to a set distance (cm)
+void move_to_dist_corr(double dist, double thresh, double speed, double reset_Y, double angle) {
+  double curr_dist = ultra_get_distance();
+  double upper_thresh = dist + thresh;
+  double curr_Y = Enes100.getY();
+
+  while (curr_dist > upper_thresh) {
+    move_forward(speed);
+    if (curr_Y < reset_Y + 0.05 && curr_Y > reset_Y - 0.05) {
+      stop_motors();
+      set_angle_simple(angle, 0.05);
+    }
+    curr_dist = ultra_get_distance();
+    curr_Y = Enes100.getY();
+    // Enes100.println("moving to distance");
+  }
+
+  stop_motors();
+}
+
+void move_to_dist_for(double dist, double thresh, double speed) {
+  double curr_dist = ultra_get_distance();
+  double upper_thresh = dist + thresh;
+
+  while (curr_dist > upper_thresh) {
+    move_forward(speed);
+    curr_dist = ultra_get_distance();
+    // Enes100.println("moving to distance");
+  }
+
+  stop_motors();
+}
+
+void move_to_dist_back(double dist, double threshold, double speed) {
+  int curr_dist = ultra_get_distance();
+  int low_thresh = dist - threshold;
+
+  while (curr_dist < low_thresh) {
+    move_backward(speed);
+    curr_dist = ultra_get_distance();
+    // Enes100.println("moving to distance");
+  }
+
+  stop_motors();
 }
 
 

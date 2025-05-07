@@ -94,13 +94,25 @@ bool is_red() { // grey: 60 150 115.   red:  38 180 180.       grey:       red: 
   get_colors();
   Serial.print("isRed: ");
   if (blue > 450 && green > 480) {
-        Enes100.println("true");
+        Enes100.println("This side is Red!! :)");
         return true;
   } else {
-    Enes100.println("false");
+    Enes100.println("This side is NOT Red :(");
     return false;
   }
-  delay(1000);
+}
+
+
+bool is_red2() { // grey: 60 150 115.   red:  38 180 180.       grey:       red: 10 25 20
+  get_colors();
+  Serial.print("isRed: ");
+  if (blue < 300 || green < 300) {
+        Enes100.println("This side is Red!! :)");
+        return true;
+  } else {
+    Enes100.println("This side is NOT Red :(");
+    return false;
+  }
 }
 
 

@@ -40,7 +40,7 @@ void measure_anomoly() {
 
   // calculate the length of the flap
   final_x = Enes100.getX() * 1000;
-  length = 2 * abs(final_x - initial_x);
+  length = abs(final_x - initial_x);
   Enes100.print("final_x: ");
   Enes100.println(final_x);
   Enes100.print("initial_x: ");
@@ -77,7 +77,7 @@ void find_anomoly() {
     // Enes100.println();
   } else {
     // move to other side of crash site
-    move_to_dist_back(30, 0.05, 100);
+    move_to_dist_back(10, 0.05, 100);
     set_angle_simple(0, 0.05);
     nav_x(100, 0.8, true);
     set_angle_simple(3.1, 0.05);

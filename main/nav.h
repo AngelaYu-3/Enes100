@@ -13,7 +13,6 @@
  * Note: navigation Objective I is in main.ino setup()
  */
 
-
 /*
  * navigating past one set of obstacles
  */
@@ -21,42 +20,56 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
   double curr_distance = ultra_get_distance();
   double curr_theta = Enes100.getTheta();
   double curr_y = Enes100.getY();
+  double curr_x = Enes100.getX();
   bool detected_obstacle = false;
   bool strafe_right = false;
 
   // move forward until OTV sees an obstacle
   while (!detected_obstacle) {
-    Enes100.println("obstacle not detected");
+    // Enes100.println("obstacle not detected");
+    if (curr_x > 2.5) {
+      return;
+    }
+
     move_forward(100);
+
     if (curr_distance <= 15 - ultrasonic_thresh) {
       detected_obstacle = true;
       Enes100.println("obstacle detected");
       stop_motors();
     }
     curr_distance = ultra_get_distance();
+    curr_x = Enes100.getX();
   }
 
   // decide on an initial strafing direction
   strafe_right = true;
 
   curr_y = Enes100.getY();
-  set_angle_simple(0, 0.05);
+  set_angle_simple(0, 0.08);
   curr_distance = ultra_get_distance();
   // while an obstacle is still seen either strafe right or left
   while (curr_distance < 15 + coordinate_thresh) {
     // break out of while loop if nothing is seen
     if (curr_distance > 30) {
+      Enes100.println("nothing seen!");
       break;
     }
 
     // decide which way to go depending on obstacle configuration
     curr_y = Enes100.getY();
     if (curr_distance < 15 + coordinate_thresh) {
-      if (curr_y <= 0.3) {
+      if (curr_y <= 0.4) {
         // obstacle right and middle
         strafe_right = false;
-        stop_motors();
-        set_angle_simple(0, 0.05);
+        // stop_motors();
+        // set_angle_simple(0, 0.05);
+      }
+
+      if (curr_y >= 1.3) {
+        strafe_right = true;
+        // stop_motors();
+        // set_angle_simple(0, 0.05);
       }
     }
 
@@ -86,8 +99,8 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
     // Enes100.println("in while loop!");
 
     // update sensor values
+    // re_oriente();
     curr_distance = ultra_get_distance();
-    // Enes100.println(curr_distance);
     curr_y = Enes100.getY();
     curr_theta = Enes100.getTheta();
   }
@@ -103,8 +116,7 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
     }
     delay(500);
   }
-
-  stop_motors();
+  Enes100.println("FINIISHED NAVIGATING OBSTACLE");
 }
 
 /*
@@ -114,7 +126,7 @@ void limbo() {
   set_angle_simple(0, 0.05);
   nav_x(150, 2.6, true);
   nav_y(150, 1.4);
-  move_to_dist_for(13.5, 0.05, 200);
+  move_to_dist_for(13.5, 0.05, 100);
 }
 
 #endif
