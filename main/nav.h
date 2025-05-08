@@ -28,12 +28,13 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
   while (!detected_obstacle) {
     // Enes100.println("obstacle not detected");
     if (curr_x > 2.5) {
+      Enes100.println("kicking out of entire loop");
       return;
     }
 
     move_forward(100);
 
-    if (curr_distance <= 15 - ultrasonic_thresh) {
+    if (curr_distance < 13.5 + ultrasonic_thresh) {
       detected_obstacle = true;
       Enes100.println("obstacle detected");
       stop_motors();
@@ -47,9 +48,9 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
 
   curr_y = Enes100.getY();
   set_angle_simple(0, 0.08);
-  // curr_distance = ultra_get_distance();
+  curr_distance = ultra_get_distance(); 
   // while an obstacle is still seen either strafe right or left
-  while (curr_distance < 15 + coordinate_thresh) {
+  while (curr_distance < 13.5 + ultrasonic_thresh) {
     // break out of while loop if nothing is seen
     if (curr_distance > 30) {
       Enes100.println("nothing seen!");
@@ -58,20 +59,22 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
 
     // decide which way to go depending on obstacle configuration
     curr_y = Enes100.getY();
-    if (curr_distance < 15 + coordinate_thresh) {
-      if (curr_y <= 0.4) {
+    // curr_distance = get_ultra_distance();
+    if (curr_y <= 0.35) {
         // obstacle right and middle
         strafe_right = false;
         // stop_motors();
         // set_angle_simple(0, 0.05);
-      }
+    }
 
-      if (curr_y >= 1.3) {
+    if (curr_y >= 1.3) {
         strafe_right = true;
         // stop_motors();
         // set_angle_simple(0, 0.05);
-      }
     }
+    // if (curr_distance < 13.5 + ultrasonic_thresh) {
+
+    // }
 
     // checking and fixing alignment + angle issues
     // curr_distance = ultra_get_distance();
@@ -108,7 +111,7 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
   Enes100.println("OUT OF WHILE LOOP");
 
   // strafe a little more to clear robot body
-  for (int i = 0; i < 2.5; i++) {
+  for (int i = 0; i < 2.7; i++) {
     if (strafe_right) {
       shift_right(speed);
     } else {
@@ -125,7 +128,7 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
 void limbo() {
   set_angle_simple(0, 0.05);
   nav_x(150, 2.6, true);
-  nav_y(150, 1.4);
+  nav_y(150, 1.6);
   move_to_dist_for(13.5, 0.05, 100);
 }
 

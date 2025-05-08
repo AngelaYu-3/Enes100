@@ -17,7 +17,7 @@
 /* 
  * measuring the length of the anomoly
  */
-void measure_anomoly() {
+void measure_anomoly(bool is_red) {
   // all measurements are in mm
   double height = 270;
   double length1 = 180;
@@ -29,10 +29,10 @@ void measure_anomoly() {
 
   double dist = ultra_get_distance();
 
-  move_to_dist_back(30, 0.05, 100);
+  move_to_dist_back(19, 0.05, 100);
 
   // shift right until the ultrasonic does not see anything
-  while (dist < 35) {
+  while (dist < 50) {
     shift_right(80);
     dist = ultra_get_distance();
   }
@@ -40,7 +40,7 @@ void measure_anomoly() {
 
   // calculate the length of the flap
   final_x = Enes100.getX() * 1000;
-  length = abs(final_x - initial_x);
+  length = 2 * abs(final_x - initial_x);
   Enes100.print("final_x: ");
   Enes100.println(final_x);
   Enes100.print("initial_x: ");
@@ -53,6 +53,14 @@ void measure_anomoly() {
     length = length1;
   } else {
     length = length2;
+  }
+
+  if (!is_red) {
+    if (length == length1) {
+      length = length2;
+    } else {
+      length = length1;
+    }
   }
 
   // transmit the measured height and length
