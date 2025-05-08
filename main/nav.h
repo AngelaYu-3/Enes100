@@ -47,7 +47,7 @@ void nav_obs(double ultrasonic_thresh, double coordinate_thresh, int speed) {
 
   curr_y = Enes100.getY();
   set_angle_simple(0, 0.08);
-  curr_distance = ultra_get_distance();
+  // curr_distance = ultra_get_distance();
   // while an obstacle is still seen either strafe right or left
   while (curr_distance < 15 + coordinate_thresh) {
     // break out of while loop if nothing is seen

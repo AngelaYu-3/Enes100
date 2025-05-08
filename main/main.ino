@@ -43,66 +43,66 @@ void setup() {
   // delay(1000); // Give time for the servo to reach position
 
   // *** Nav Objective I: move to within 150mm of crash site ***
-  Enes100.println("**** Starting Nav Objective I ****");
-  if (Enes100.getY() > 1) {
-    set_angle_simple(-(PI/2), 0.05);
-  } else {
-    set_angle_simple((PI/2), 0.05);
-  }
+  // Enes100.println("**** Starting Nav Objective I ****");
+  // if (Enes100.getY() > 1) {
+  //   set_angle_simple(-(PI/2), 0.05);
+  // } else {
+  //   set_angle_simple((PI/2), 0.05);
+  // }
 
-  move_to_dist_for(13.5, 0, 60);
-  curr_y = Enes100.getY();
-  if (curr_y > 1 || curr_y == -1) {
-    is_flap_red = true;
-    move_to_dist_for(13.5, 0, 60);
-  }
-  stop_motors();
+  move_to_dist_for(10, 0, 60);
+  // curr_y = Enes100.getY();
+  // if (curr_y > 1 || curr_y == -1) {
+  //   is_flap_red = true;
+  //   move_to_dist_for(13.5, 0, 60);
+  // }
+  // stop_motors();
   
-  Enes100.println("**** Finished Nav Objective I ****");
-  delay(200);
+  // Enes100.println("**** Finished Nav Objective I ****");
+  // delay(200);
 
-  // // *** Mission Objective I: find anomoly
-  Enes100.println("**** Starting Mission Objective I ****");
-  if (is_flap_red) {
-    Enes100.println("This side is red");
-  } else {
-    Enes100.println("This side is NOT red");
-  }
+  // // // *** Mission Objective I: find anomoly
+  // Enes100.println("**** Starting Mission Objective I ****");
+  // if (is_flap_red) {
+  //   Enes100.println("This side is red");
+  // } else {
+  //   Enes100.println("This side is NOT red");
+  // }
   
-  delay(200);
-  // // find_anomoly();
-  Enes100.println("**** Finished Mission Objective I ****");
+  // delay(200);
+  // // // find_anomoly();
+  // Enes100.println("**** Finished Mission Objective I ****");
 
-  // // *** Mission Objective II: measure anomolly
-  Enes100.println("**** Starting Mission Objective II ****");
-  measure_anomoly();
-  delay(200);
-  Enes100.println("**** Finished Mission Objective II ****");
+  // // // *** Mission Objective II: measure anomolly
+  // Enes100.println("**** Starting Mission Objective II ****");
+  // measure_anomoly();
+  // delay(200);
+  // Enes100.println("**** Finished Mission Objective II ****");
 
-  // *** Nav Objective II: navigate through obstacles
-  Enes100.println("**** Starting Nav Objective II ****");
-  double curr_x;
-  move_to_dist_back(20, 0.05, 80);
-  set_angle_simple(0, 0.05);
-  nav_y(100, 1);
-  nav_x(100, 0.5, true);
+  // // *** Nav Objective II: navigate through obstacles
+  // Enes100.println("**** Starting Nav Objective II ****");
+  // double curr_x;
+  // move_to_dist_back(20, 0.05, 80);
+  // set_angle_simple(0, 0.05);
+  // nav_y(100, 1);
+  // nav_x(100, 0.5, true);
 
-  curr_x = Enes100.getX();
-  // nav_obs(0.05, 0.05, 100);
-  // nav_obs(0.05, 0.05, 100);
-  while (curr_x <= 2.4 || curr_x == -1) {
-    curr_x = Enes100.getX();
-    nav_obs(0.05, 0.05, 100);
-  }
+  // curr_x = Enes100.getX();
+  // // nav_obs(0.05, 0.05, 100);
+  // // nav_obs(0.05, 0.05, 100);
+  // while (curr_x <= 2.4 || curr_x == -1) {
+  //   curr_x = Enes100.getX();
+  //   nav_obs(0.05, 0.05, 100);
+  // }
 
-  Enes100.println("**** Finished Nav Objective II ****");
-  curr_x = Enes100.getX();
-  // *** Nav Objective III: navigate through limbo
-  if (curr_x >= 2.45) {
-    Enes100.println("**** Starting Nav Objective III ****");
-    limbo();
-    Enes100.println("**** Finished Nav Objective III ****");
-  }
+  // Enes100.println("**** Finished Nav Objective II ****");
+  // curr_x = Enes100.getX();
+  // // *** Nav Objective III: navigate through limbo
+  // if (curr_x >= 2.45) {
+  //   Enes100.println("**** Starting Nav Objective III ****");
+  //   limbo();
+  //   Enes100.println("**** Finished Nav Objective III ****");
+  // }
 }
 
 
