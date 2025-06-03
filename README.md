@@ -1,4 +1,8 @@
 # Space Crash
+Arduinio C code for autonomous robot which navigates randomized obstacles and completes a designated mission using ultrasonic, color and WiFi sensors.
+
+Selected for end of semester showcase and nominated for best mechanical design award (top 20 of 90+ teams)
+
 ENES 100 - 0202 
 
 Spring 2025
